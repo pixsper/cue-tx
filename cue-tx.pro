@@ -49,21 +49,24 @@ DISTFILES +=
 RESOURCES += \
     resources/resources.qrc
 
-macx|win32: LIBS += -L$$PWD/third-party/rtmidi/lib/ -lrtmidi
-
 macx: LIBS += -framework CoreFoundation
 macx: LIBS += -framework CoreAudio
 macx: LIBS += -framework CoreMidi
+win32: LIBS += -lwinmm
 
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/third-party/rtmidi/lib/ -lrtmidi
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/third-party/rtmidi/lib/ -lrtmidid
+else:macx: LIBS += -L$$PWD/third-party/rtmidi/lib/ -lrtmidi
 
 INCLUDEPATH += $$PWD/third-party/rtmidi/include \
                $$PWD/third-party/oscpp/include
 
-
-
 DEPENDPATH += $$PWD/third-party/rtmidi/include \
               $$PWD/third-party/oscpp/include
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/rtmidi.lib
-else:macx|win32-g++: PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/librtmidi.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/librtmidi.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/librtmidid.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/rtmidi.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/rtmidid.lib
+else:macx: PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/librtmidi.a
 
