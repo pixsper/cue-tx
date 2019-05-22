@@ -15,7 +15,7 @@ enum MidiTimecodeStatusFlags
     TachOrControlTrackUpdatedCode = 0x40
 };
 
-class MscTimecode
+struct MscTimecode
 {
     MscTimecodeFramerate _framerate;
 

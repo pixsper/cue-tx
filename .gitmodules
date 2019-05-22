@@ -1,0 +1,3 @@
+[submodule "third-party/oscpp"]
+	path = third-party/oscpp
+	url = https://impsnldavid@github.com/kaoskorobase/oscpp

@@ -1,4 +1,4 @@
-#include "msctimecode.h"
+#include "MscTimecode.h"
 
 MscTimecode::MscTimecode()
 {

@@ -1,13 +1,14 @@
 #include <QApplication>
 #include <QMenu>
 #include <QSystemTrayIcon>
+#include <QMessageBox>
 
-#include "preferenceswindow.h"
-#include "qmscudpreceiver.h"
-#include "qmidiout.h"
+#include "PreferencesWindow.h"
 
 int main(int argc, char *argv[])
 {
+    QString version(GIT_VERSION);
+
     QApplication a(argc, argv);
     a.setQuitOnLastWindowClosed(false);
 
@@ -23,19 +24,12 @@ int main(int argc, char *argv[])
     QMenu* trayMenu = new QMenu();
     trayMenu->addAction("&Preferences...", [&](){ preferencesWindow.show(); });
     trayMenu->addSeparator();
-    trayMenu->addAction("&About CueTX");
+    trayMenu->addAction("&About CueTX", [&]() { QMessageBox::about(nullptr, "CueTX", "CueTX by David Butler\n" + version); });
     trayMenu->addSeparator();
     trayMenu->addAction("&Quit", [](){ QApplication::quit(); });
 
     tray.show();
     tray.setContextMenu(trayMenu);
-
-    QMidiOut midiOut;
-    QMscUdpReceiver receiver;
-
-    QObject::connect(&receiver,&QMscUdpReceiver::packetReceived, &midiOut, &QMidiOut::sendMessage);
-
-    receiver.startListening(6004);
 
     return a.exec();
 }

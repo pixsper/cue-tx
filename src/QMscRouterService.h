@@ -1,5 +1,4 @@
-#ifndef QMSCROUTERSERVICE_H
-#define QMSCROUTERSERVICE_H
+#pragma once
 
 #include <QObject>
 
@@ -13,5 +12,3 @@ signals:
 
 public slots:
 };
-
-#endif // QMSCROUTERSERVICE_H

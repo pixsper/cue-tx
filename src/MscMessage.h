@@ -1,6 +1,7 @@
 #pragma once
 #include <QtGlobal>
 #include <QString>
+#include <QByteArray>
 
 enum MscCommandType : quint8
 {
@@ -32,7 +33,7 @@ enum MscCommandType : quint8
         CloseCuePath = 0x1E
 };
 
-class MscMessage
+struct MscMessage
 {
     int _deviceId;
     MscCommandType _commandType;
@@ -48,6 +49,11 @@ class MscMessage
     int _macroNumber;
 
 public:
+    static bool FromByteArray(const QByteArray& array, MscMessage& message)
+    {
+        return false;
+    }
+
     MscMessage();
 };
 

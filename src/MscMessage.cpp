@@ -1,4 +1,4 @@
-#include "mscmessage.h"
+#include "MscMessage.h"
 
 MscMessage::MscMessage()
 {
