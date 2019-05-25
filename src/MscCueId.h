@@ -15,20 +15,30 @@
 
 #pragma once
 
-#include <QObject>
-#include "../MscMessage.h"
+#include <QStringList>
+#include <QRegularExpression>
+#include <QDataStream>
 
-class QCueTxInputService : public QObject
+class MscCueId
 {
-    Q_OBJECT
+    static const QRegularExpression VALID_CUEID;
 
-protected:
-    explicit QCueTxInputService(QObject* parent);
+    QStringList _cueParts;
 
 public:
-    virtual bool start(const QVariantMap& configuration) = 0;
-    virtual void stop() = 0;
+    static bool isValidMscCue(const QString& mscCue);
 
-signals:
-    void messageReceived(const MscMessage& message);
+    MscCueId();
+    MscCueId(const QString& cueString);
+    MscCueId(const char* cuePart...);
+
+    bool operator==(const MscCueId& rhs) const;
+    bool operator!=(const MscCueId& rhs) const;
+
+    bool isValid() const;
+
+    QString toString() const;
 };
+
+QDataStream& operator>>(QDataStream& stream, MscCueId& cueId);
+QDataStream& operator<<(QDataStream& stream, MscCueId& cueId);

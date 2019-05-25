@@ -15,20 +15,13 @@
 
 #pragma once
 
-#include <QObject>
-#include "../MscMessage.h"
+#include <QHash>
+#include "ServiceTypes.h"
+#include "input_services/QCueTxInputService.h"
+#include "output_services/QCueTxOutputService.h"
 
-class QCueTxInputService : public QObject
+namespace ServiceFactory
 {
-    Q_OBJECT
-
-protected:
-    explicit QCueTxInputService(QObject* parent);
-
-public:
-    virtual bool start(const QVariantMap& configuration) = 0;
-    virtual void stop() = 0;
-
-signals:
-    void messageReceived(const MscMessage& message);
-};
+    QCueTxInputService* createInputService(QObject* parent, InputServiceType serviceType);
+    QCueTxOutputService* createOutputService(QObject* parent, OutputServiceType serviceType);
+}

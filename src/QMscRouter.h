@@ -16,19 +16,25 @@
 #pragma once
 
 #include <QObject>
-#include "../MscMessage.h"
+#include "ServiceTypes.h"
+#include "ServiceFactory.h"
+#include "input_services/QCueTxInputService.h"
+#include "output_services/QCueTxOutputService.h"
 
-class QCueTxInputService : public QObject
+class QMscRouter : public QObject
 {
     Q_OBJECT
 
-protected:
-    explicit QCueTxInputService(QObject* parent);
+    InputServiceType _inputServiceType;
+    QCueTxInputService* _inputService;
+
+    OutputServiceType _outputServiceType;
+    QCueTxOutputService* _outputService;
 
 public:
-    virtual bool start(const QVariantMap& configuration) = 0;
-    virtual void stop() = 0;
+    explicit QMscRouter(QObject *parent = nullptr);
 
-signals:
-    void messageReceived(const MscMessage& message);
+    void start(const QVariantMap& inputConfiguration, const QVariantMap& outputConfiguration);
+
+    void stop();
 };

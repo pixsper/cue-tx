@@ -15,20 +15,22 @@
 
 #pragma once
 
-#include <QObject>
-#include "../MscMessage.h"
-
-class QCueTxInputService : public QObject
+enum class InputServiceType
 {
-    Q_OBJECT
+    None = 0,
+    MidiMsc = 1,
+    GmaMsc = 21,
+    CustomOsc = 101,
+    EosOsc = 121
+};
 
-protected:
-    explicit QCueTxInputService(QObject* parent);
-
-public:
-    virtual bool start(const QVariantMap& configuration) = 0;
-    virtual void stop() = 0;
-
-signals:
-    void messageReceived(const MscMessage& message);
+enum class OutputServiceType
+{
+    None = 0,
+    MidiMsc = 1,
+    GmaMsc = 21,
+    CustomOsc = 101,
+    DisguiseOsc = 111,
+    EosOsc = 121,
+    QLabOsc = 131
 };

@@ -15,15 +15,15 @@
 
 #pragma once
 
-#include "QCueTxInputService.h"
-#include "../qmidi/QRtMidiIn.h"
 #include <QVariant>
+#include "QCueTxOutputService.h"
+#include "../qmidi/QRtMidiOut.h"
 
-class QMidiMscInputService : public QCueTxInputService
+class QMidiMscOutputService : public QCueTxOutputService
 {
     Q_OBJECT
 
-    QRtMidiIn* _midiIn;
+    QRtMidiOut* _midiOut;
 
     const char* SETTINGS_PORT_NAME = "port";
     const char* SETTINGS_PORT_DEFAULT = "";
@@ -35,64 +35,57 @@ class QMidiMscInputService : public QCueTxInputService
     const bool SETTINGS_ISVIRTUAL_DEFAULT = false;
 #endif
 
-    const char* RTMIDI_PORT_NAME = "Cue TX Input";
+    const char* RTMIDI_PORT_NAME = "Cue TX Output";
+
 
 public:
-    explicit QMidiMscInputService(QObject* parent = nullptr)
-        : QCueTxInputService(parent),
-          _midiIn(new QRtMidiIn(this, RtMidi::Api::UNSPECIFIED, "Cue TX MIDI Input Client"))
+    explicit QMidiMscOutputService(QObject *parent = nullptr)
+        : QCueTxOutputService(parent),
+          _midiOut(new QRtMidiOut(this, RtMidi::Api::UNSPECIFIED, "Cue TX MIDI Output Client"))
     {
-        _midiIn->ignoreTypes(false, true, true);
+
     }
 
-    bool start(const QVariantMap& settings) override
+    virtual bool start(const QVariantMap& settings) override
     {
-        connect(_midiIn, &QRtMidiIn::messageReceived, this, &QMidiMscInputService::processMessage);
-
 #ifdef Q_OS_MAC
         auto itVPort = settings.find(SETTINGS_ISVIRTUAL_NAME);
 
         if ((itVPort != settings.end() && itVPort.value().toBool()) || SETTINGS_ISVIRTUAL_DEFAULT)
         {
-            _midiIn->openVirtualPort(RTMIDI_PORT_NAME);
-            return _midiIn->isPortOpen();
+            _midiOut->openVirtualPort(RTMIDI_PORT_NAME);
+            return _midiOut->isPortOpen();
         }
 
 #endif
         auto itPort = settings.find(SETTINGS_PORT_NAME);
         if (itPort != settings.end())
         {
-            auto ports = QRtMidiIn::getMidiInPorts();
+            auto ports = QRtMidiOut::getMidiOutPorts();
 
             for(const auto& pair : ports.toStdMap())
             {
                 if (pair.second == itPort.value().toString())
                 {
-                    _midiIn->openPort(pair.first, RTMIDI_PORT_NAME);
-                    return _midiIn->isPortOpen();
+                    _midiOut->openPort(pair.first, RTMIDI_PORT_NAME);
+                    return _midiOut->isPortOpen();
                 }
             }
         }
 
         // Just open the first port we can find, if any
-        _midiIn->openPort(0, RTMIDI_PORT_NAME);
-        return _midiIn->isPortOpen();
+        _midiOut->openPort(0, RTMIDI_PORT_NAME);
+        return _midiOut->isPortOpen();
     }
 
-    void stop() override
+    virtual void stop() override
     {
-        if (_midiIn->isPortOpen())
-            _midiIn->closePort();
-
-        disconnect(_midiIn, &QRtMidiIn::messageReceived, this, &QMidiMscInputService::processMessage);
+        _midiOut->closePort();
     }
 
-private slots:
-    void processMessage(double timestamp, const QByteArray& message)
+public slots:
+    void sendMessage(const MscMessage& message) override
     {
-        MscMessage mscMessage;
-        if (MscMessage::FromByteArray(message, mscMessage))
-            emit messageReceived(mscMessage);
-    }
 
+    }
 };

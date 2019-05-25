@@ -16,25 +16,32 @@ QMAKE_INFO_PLIST = $$PWD/build/Info.plist
 CONFIG += c++14
 
 SOURCES += \
+        src/MscCueId.cpp \
         src/MscMessage.cpp \
         src/MscTimecode.cpp \
         src/PreferencesWindow.cpp \
-        src/QMscRouterService.cpp \
+        src/QMscRouter.cpp \
+        src/ServiceFactory.cpp \
         src/qmidi/QRtMidiIn.cpp \
         src/qmidi/QRtMidiOut.cpp \
         src/main.cpp
 
 HEADERS += \
+        src/MscCueId.h \
         src/MscMessage.h \
         src/MscTimecode.h \
         src/PreferencesWindow.h \
+        src/QMscRouter.h \
+        src/ServiceFactory.h \
+        src/ServiceTypes.h \
         src/input_services/QCueTxInputService.h \
         src/input_services/QEosOscInputService.h \
         src/input_services/QGmaMscInputService.h \
         src/input_services/QMidiMscInputService.h \
         src/output_services/QCueTxOutputService.h \
         src/output_services/QDisguiseOscOutputService.h \
-        src/QMscRouterService.h \
+        src/output_services/QGmaMscOutputService.h \
+        src/output_services/QMidiMscOutputService.h \
         src/output_services/QQLabOscOutputService.h \
         src/qmidi/QRtMidiIn.h \
         src/qmidi/QRtMidiOut.h
