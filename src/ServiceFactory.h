@@ -15,7 +15,6 @@
 
 #pragma once
 
-#include <QHash>
 #include "ServiceTypes.h"
 #include "input_services/QCueTxInputService.h"
 #include "output_services/QCueTxOutputService.h"

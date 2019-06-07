@@ -16,10 +16,7 @@
 #pragma once
 
 #include <QtGlobal>
-#include <QString>
 #include <QByteArray>
-#include <QDataStream>
-#include <QStringList>
 #include "MscCueId.h"
 #include "MscTimecode.h"
 

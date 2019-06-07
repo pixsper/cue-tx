@@ -50,7 +50,7 @@ public:
         connect(_midiIn, &QRtMidiIn::messageReceived, this, &QMidiMscInputService::processMessage);
 
 #ifdef Q_OS_MAC
-        auto itVPort = settings.find(SETTINGS_ISVIRTUAL_NAME);
+        const auto itVPort = settings.find(SETTINGS_ISVIRTUAL_NAME);
 
         if ((itVPort != settings.end() && itVPort.value().toBool()) || SETTINGS_ISVIRTUAL_DEFAULT)
         {
@@ -59,10 +59,10 @@ public:
         }
 
 #endif
-        auto itPort = settings.find(SETTINGS_PORT_NAME);
+        const auto itPort = settings.find(SETTINGS_PORT_NAME);
         if (itPort != settings.end())
         {
-            auto ports = QRtMidiIn::getMidiInPorts();
+	        const auto ports = QRtMidiIn::getMidiInPorts();
 
             for(const auto& pair : ports.toStdMap())
             {

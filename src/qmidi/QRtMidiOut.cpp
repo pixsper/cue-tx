@@ -15,14 +15,14 @@
 
 #include "QRtMidiOut.h"
 
-QRtMidiOut::QRtMidiOut(QObject* parent, RtMidi::Api api, QString clientName)
+QRtMidiOut::QRtMidiOut(QObject* parent, RtMidi::Api api, const QString& clientName)
     : QObject(parent),
       _midiOut(api, clientName.toStdString())
 {
     _midiOut.setErrorCallback(&QRtMidiOut::rtMidiErrorCallback, this);
 }
 
-QRtMidiOut::QRtMidiOut(RtMidi::Api api, QString clientName)
+QRtMidiOut::QRtMidiOut(RtMidi::Api api, const QString& clientName)
     : QRtMidiOut(nullptr, api, clientName)
 {
 
@@ -33,12 +33,12 @@ RtMidi::Api QRtMidiOut::getCurrentApi()
     return _midiOut.getCurrentApi();
 }
 
-void QRtMidiOut::openPort(int portNumber, const QString portName)
+void QRtMidiOut::openPort(int portNumber, const QString& portName)
 {
     _midiOut.openPort(static_cast<unsigned int>(portNumber), portName.toStdString());
 }
 
-void QRtMidiOut::openVirtualPort(const QString portName)
+void QRtMidiOut::openVirtualPort(const QString& portName)
 {
     _midiOut.openVirtualPort(portName.toStdString());
 }
@@ -67,7 +67,7 @@ QMap<int, QString> QRtMidiOut::getMidiOutPorts()
 {
     QMap<int, QString> midiPorts;
     RtMidiOut midiOut;
-    quint32 midiPortCount = midiOut.getPortCount();
+    const quint32 midiPortCount = midiOut.getPortCount();
 
     for(quint32 i = 0; i < midiPortCount; ++i)
         midiPorts.insert(static_cast<const int>(i), midiOut.getPortName(i).c_str());
@@ -77,7 +77,7 @@ QMap<int, QString> QRtMidiOut::getMidiOutPorts()
 
 void QRtMidiOut::rtMidiErrorCallback(RtMidiError::Type type, const std::string &errorText, void *userData)
 {
-    QRtMidiOut* qMidiOut = static_cast<QRtMidiOut*>(userData);
+	auto qMidiOut = static_cast<QRtMidiOut*>(userData);
 
     emit qMidiOut->errorReceived(type, QString::fromStdString(errorText));
 }

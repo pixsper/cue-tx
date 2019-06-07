@@ -44,7 +44,7 @@ public:
 
     virtual bool start(const QVariantMap& settings) override
     {
-        auto it = settings.find(SETTINGS_HOSTIP_NAME);
+	    const auto it = settings.find(SETTINGS_HOSTIP_NAME);
 
         if (it != settings.end())
             _hostIp = QHostAddress(it.value().toString());

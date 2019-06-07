@@ -10,14 +10,14 @@ class QRtMidiOut : public QObject
 
     Q_OBJECT
 public:
-    QRtMidiOut(QObject *parent, RtMidi::Api api = RtMidi::Api::UNSPECIFIED, QString clientName = "RtMidi Output Client");
-    QRtMidiOut(RtMidi::Api api = RtMidi::Api::UNSPECIFIED, QString clientName = "RtMidi Output Client");
+    QRtMidiOut(QObject *parent, RtMidi::Api api = RtMidi::Api::UNSPECIFIED, const QString& clientName = "RtMidi Output Client");
+    QRtMidiOut(RtMidi::Api api = RtMidi::Api::UNSPECIFIED, const QString& clientName = "RtMidi Output Client");
 
     RtMidi::Api getCurrentApi();
-    void openPort(int portNumber = 0, const QString portName = "RtMidi Output");
+    void openPort(int portNumber = 0, const QString& portName = "RtMidi Output");
     void closePort();
     bool isPortOpen() const;
-    void openVirtualPort(const QString portName = "RtMidi Output");
+    void openVirtualPort(const QString& portName = "RtMidi Output");
     int getPortCount();
     QString getPortName(int portNumber = 0);
 
@@ -31,5 +31,5 @@ public slots:
     void sendMessage(const char* message, int size);
 
 signals:
-    void errorReceived(RtMidiError::Type type, const QString errorText);
+    void errorReceived(RtMidiError::Type type, const QString& errorText);
 };

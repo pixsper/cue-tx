@@ -17,144 +17,150 @@
 
 int getFrameCount(MidiTimecodeFramerate framerate)
 {
-    switch(framerate)
-    {
-        case MidiTimecodeFramerate::F24:
-            return 24;
+	switch (framerate)
+	{
+	case MidiTimecodeFramerate::F24:
+		return 24;
 
-        case MidiTimecodeFramerate::F25:
-            return 25;
+	case MidiTimecodeFramerate::F25:
+		return 25;
 
-        case MidiTimecodeFramerate::F30Df:
-        case MidiTimecodeFramerate::F30Nd:
-            return 30;
-    }
+	case MidiTimecodeFramerate::F30Df:
+	case MidiTimecodeFramerate::F30Nd:
+		return 30;
+	}
 }
 
 
 MscTimecode::MscTimecode()
-    : _hours(0),
-    _minutes(0),
-    _seconds(0),
-    _frames(0),
-    _isNegative(false),
-    _isColorFrame(false),
-    _status(MidiTimecodeStatusFlags::None)
+	:  _framerate(MidiTimecodeFramerate::F30Df), 
+		_hours(0),
+	  _minutes(0),
+	  _seconds(0),
+	  _frames(0),
+	  _subFrames(0),
+	  _isNegative(false),
+	  _isColorFrame(false),
+	  _status(MidiTimecodeStatusFlags::None)
 {
-
 }
 
-MscTimecode::MscTimecode(int hours, int minutes, int seconds, int frames, int subFrames, bool isNegative, bool isColorFrame)
-    : _hours(hours),
-    _minutes(minutes),
-    _seconds(seconds),
-    _frames(frames),
-    _subFrames(subFrames),
-    _isNegative(isNegative),
-    _isColorFrame(isColorFrame),
-    _status(MidiTimecodeStatusFlags::None)
+MscTimecode::MscTimecode(MidiTimecodeFramerate framerate, int hours, int minutes, int seconds, int frames,
+                         int subFrames, bool isNegative, bool isColorFrame)
+	: _framerate(framerate),
+	  _hours(hours),
+	  _minutes(minutes),
+	  _seconds(seconds),
+	  _frames(frames),
+	  _subFrames(subFrames),
+	  _isNegative(isNegative),
+	  _isColorFrame(isColorFrame),
+	  _status(MidiTimecodeStatusFlags::None)
 {
-
 }
 
-MscTimecode::MscTimecode(int hours, int minutes, int seconds, int frames, MidiTimecodeStatusFlags status, bool isNegative, bool isColorFrame)
-    : _hours(hours),
-    _minutes(minutes),
-    _seconds(seconds),
-    _frames(frames),
-    _subFrames(0),
-    _isNegative(isNegative),
-    _isColorFrame(isColorFrame),
-    _status(status)
+MscTimecode::MscTimecode(MidiTimecodeFramerate framerate, int hours, int minutes, int seconds, int frames,
+                         MidiTimecodeStatusFlags status, bool isNegative, bool isColorFrame)
+	: _framerate(framerate),
+	  _hours(hours),
+	  _minutes(minutes),
+	  _seconds(seconds),
+	  _frames(frames),
+	  _subFrames(0),
+	  _isNegative(isNegative),
+	  _isColorFrame(isColorFrame),
+	  _status(status)
 {
-
 }
 
 bool MscTimecode::FromByteArray(const QByteArray& data, MscTimecode& value)
 {
-    if (data.length() != 5)
-        return false;
+	if (data.length() != 5)
+		return false;
 
-    MidiTimecodeFramerate framerate = static_cast<MidiTimecodeFramerate>(((data[0] & 0x60) >> 5));
+	const auto framerate = static_cast<MidiTimecodeFramerate>(((data[0] & 0x60) >> 5));
 
-    int hours = data[0] & 0x1F;
-    if (hours > 23)
-        return false;
+	const int hours = data[0] & 0x1F;
+	if (hours > 23)
+		return false;
 
-    bool isColorFrame = (data[1] & 0x40) > 0;
+	const bool isColorFrame = (data[1] & 0x40) > 0;
 
-    int minutes = data[1] & 0x3F;
-    if (minutes > 59)
-        return false;
+	const int minutes = data[1] & 0x3F;
+	if (minutes > 59)
+		return false;
 
-    // Reserved bit, must be set to 0
-    if ((data[2] & 0x40) != 0)
-        return false;
+	// Reserved bit, must be set to 0
+	if ((data[2] & 0x40) != 0)
+		return false;
 
-    int seconds = data[2] & 0x3F;
-    if (seconds > 59)
-        return false;
+	const int seconds = data[2] & 0x3F;
+	if (seconds > 59)
+		return false;
 
-    bool isNegative = (data[3] & 0x40) > 0;
-    bool isFinalBitStatus = (data[3] & 0x20) > 0;
+	const bool isNegative = (data[3] & 0x40) > 0;
+	const bool isFinalBitStatus = (data[3] & 0x20) > 0;
 
-    int frames = data[3] & 0x1F;
-    if (frames > getFrameCount(framerate))
-        return false;
+	const int frames = data[3] & 0x1F;
+	if (frames > getFrameCount(framerate))
+		return false;
 
-    int subFrames = -1;
-    MidiTimecodeStatusFlags status = MidiTimecodeStatusFlags::None;
+	int subFrames = -1;
+	MidiTimecodeStatusFlags status = MidiTimecodeStatusFlags::None;
 
-    if (isFinalBitStatus)
-    {
-        // Reserved bits, must be set to 0
-        if ((data[4] & 0x0F) != 0)
-            return false;
+	if (isFinalBitStatus)
+	{
+		// Reserved bits, must be set to 0
+		if ((data[4] & 0x0F) != 0)
+			return false;
 
-        status = static_cast<MidiTimecodeStatusFlags>(data[4]);
-    }
-    else
-    {
-        subFrames = data[4] & 0x7F;
-        if (subFrames > 99)
-            return false;
-    }
+		status = static_cast<MidiTimecodeStatusFlags>(data[4]);
+	}
+	else
+	{
+		subFrames = data[4] & 0x7F;
+		if (subFrames > 99)
+			return false;
+	}
 
-    value._hours = hours;
-    value._minutes = minutes;
-    value._seconds = seconds;
-    value._frames = frames;
-    value._subFrames = subFrames;
-    value._isNegative = isNegative;
-    value._isColorFrame = isColorFrame;
-    value._status = status;
+	value._hours = hours;
+	value._minutes = minutes;
+	value._seconds = seconds;
+	value._frames = frames;
+	value._subFrames = subFrames;
+	value._isNegative = isNegative;
+	value._isColorFrame = isColorFrame;
+	value._status = status;
 
-    return true;
+	return true;
 }
 
-QByteArray MscTimecode::ToByteArray()
+QByteArray MscTimecode::ToByteArray() const
 {
-    QByteArray data;
-    data[0] = static_cast<char>((static_cast<quint8>(_framerate) << 5) + _hours);
-    data[1] = static_cast<char>((_isColorFrame ? 0x40 : 0x00) + _minutes);
-    data[2] = static_cast<char>(_seconds);
-    data[3] = static_cast<char>((_isNegative ? 0x40 : 0x00) + (_status != MidiTimecodeStatusFlags::None ? 0x20 : 0x00) + _frames);
-    data[4] = _status != MidiTimecodeStatusFlags::None ? static_cast<char>(_status) : static_cast<char>(_subFrames != -1 ? _subFrames : 0);
+	QByteArray data;
+	data[0] = static_cast<char>((static_cast<quint8>(_framerate) << 5) + _hours);
+	data[1] = static_cast<char>((_isColorFrame ? 0x40 : 0x00) + _minutes);
+	data[2] = static_cast<char>(_seconds);
+	data[3] = static_cast<char>((_isNegative ? 0x40 : 0x00) + (_status != MidiTimecodeStatusFlags::None ? 0x20 : 0x00) +
+		_frames);
+	data[4] = _status != MidiTimecodeStatusFlags::None
+		          ? static_cast<char>(_status)
+		          : static_cast<char>(_subFrames != -1 ? _subFrames : 0);
 
-    return data;
+	return data;
 }
 
 QDataStream& operator>>(QDataStream& stream, MscTimecode& timecode)
 {
-    QByteArray timecodeRaw(5, 0);
-    stream.readRawData(timecodeRaw.data(), 5);
-    timecode.FromByteArray(timecodeRaw, timecode);
-    return stream;
+	QByteArray timecodeRaw(5, 0);
+	stream.readRawData(timecodeRaw.data(), 5);
+	timecode.FromByteArray(timecodeRaw, timecode);
+	return stream;
 }
 
 QDataStream& operator<<(QDataStream& stream, MscTimecode& timecode)
 {
-    QByteArray data = timecode.ToByteArray();
-    stream.writeBytes(data, static_cast<uint>(data.length()));
-    return stream;
+	const QByteArray data = timecode.ToByteArray();
+	stream.writeBytes(data, static_cast<uint>(data.length()));
+	return stream;
 }

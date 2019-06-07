@@ -46,10 +46,10 @@ public:
 
     }
 
-    virtual bool start(const QVariantMap& settings) override
+    bool start(const QVariantMap& settings) override
     {
 #ifdef Q_OS_MAC
-        auto itVPort = settings.find(SETTINGS_ISVIRTUAL_NAME);
+        const auto itVPort = settings.find(SETTINGS_ISVIRTUAL_NAME);
 
         if ((itVPort != settings.end() && itVPort.value().toBool()) || SETTINGS_ISVIRTUAL_DEFAULT)
         {
@@ -58,10 +58,10 @@ public:
         }
 
 #endif
-        auto itPort = settings.find(SETTINGS_PORT_NAME);
+	    const auto itPort = settings.find(SETTINGS_PORT_NAME);
         if (itPort != settings.end())
         {
-            auto ports = QRtMidiOut::getMidiOutPorts();
+	        const auto ports = QRtMidiOut::getMidiOutPorts();
 
             for(const auto& pair : ports.toStdMap())
             {
@@ -78,7 +78,7 @@ public:
         return _midiOut->isPortOpen();
     }
 
-    virtual void stop() override
+    void stop() override
     {
         _midiOut->closePort();
     }

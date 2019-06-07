@@ -27,25 +27,26 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) :
     setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
     setWindowTitle("Cue TX");
 
-    QFormLayout* inputSourceFormLayout = new QFormLayout;
+    auto inputSourceFormLayout = new QFormLayout;
 
     _inputSourceComboBox.addItem("MSC (MIDI)");
     _inputSourceComboBox.addItem("MSC (GrandMA2 Ethernet)");
-    connect(&_inputSourceComboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &PreferencesWindow::onInputSourceChanged);
+    connect(&_inputSourceComboBox, qOverload<int>(&QComboBox::currentIndexChanged), this,
+            &PreferencesWindow::onInputSourceChanged);
 
     inputSourceFormLayout->addRow(new QLabel("Input Source"), &_inputSourceComboBox);
 
     _mainLayout.addLayout(inputSourceFormLayout);
 
 
-    QFormLayout* inputMidiMscControlsFormLayout = new QFormLayout;
+    auto inputMidiMscControlsFormLayout = new QFormLayout;
 
     _inputMidiPortComboBox.addItem("CueTX Virtual Port");
     _inputMidiPortComboBox.insertSeparator(1);
 
     {
         QScopedPointer<RtMidiIn> midiIn(new RtMidiIn);
-        quint32 midiPortCount = midiIn->getPortCount();
+        const quint32 midiPortCount = midiIn->getPortCount();
 
         for(quint32 i = 0; i < midiPortCount; ++i)
             _inputMidiPortComboBox.addItem(midiIn->getPortName(i).c_str());
@@ -57,7 +58,7 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) :
     _mainLayout.addWidget(&_inputMidiMscControlsGroupBox);
 
 
-    QFormLayout* inputGmaMscControlsFormLayout = new QFormLayout;
+    auto inputGmaMscControlsFormLayout = new QFormLayout;
 
     _inputUdpPortSpinBox.setRange(6000, 6100);
     _inputUdpPortSpinBox.setButtonSymbols(QSpinBox::ButtonSymbols::NoButtons);
@@ -69,7 +70,7 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) :
     _inputGmaMscControlsGroupBox.setLayout(inputGmaMscControlsFormLayout);
     _mainLayout.addWidget(&_inputGmaMscControlsGroupBox);
 
-    QFormLayout* outputDestinationFormLayout = new QFormLayout;
+    auto outputDestinationFormLayout = new QFormLayout;
 
     _outputDestinationComboBox.addItem("MSC (MIDI)");
     _outputDestinationComboBox.addItem("MSC (GrandMA2 Ethernet)");

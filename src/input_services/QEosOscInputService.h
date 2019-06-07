@@ -37,7 +37,7 @@ public:
     explicit QEosOscInputService(QObject *parent = nullptr)
         : QCueTxInputService(parent),
           _udpSocket(new QUdpSocket(this)),
-          _addressRegex("\\/eos\\/out\\/event\\/cue\\/(\\d*\\.?\\d+)\\/(\\d*\\.?\\d+)\\/(fire|stop)")
+          _addressRegex(R"(\/eos\/out\/event\/cue\/(\d*\.?\d+)\/(\d*\.?\d+)\/(fire|stop))")
     {
         _addressRegex.optimize();
     }
@@ -46,7 +46,7 @@ public:
     {
         quint16 port = SETTINGS_PORT_DEFAULT;
 
-        auto it = settings.find(SETTINGS_PORT_KEY);
+        const auto it = settings.find(SETTINGS_PORT_KEY);
 
         if (it != settings.end())
             port = static_cast<quint16>(it.value().toInt());
@@ -65,7 +65,7 @@ public:
     {
         const OSCPP::Server::Message message(packet);
 
-        auto match = _addressRegex.match(message.address());
+        const auto match = _addressRegex.match(message.address());
 
         if (!match.isValid())
             return;
@@ -82,11 +82,11 @@ public:
 
     void processDatagram(const QNetworkDatagram& datagram)
     {
-        OSCPP::Server::Packet packet(datagram.data().data(), static_cast<size_t>(datagram.data().size()));
+	    const OSCPP::Server::Packet packet(datagram.data().data(), static_cast<size_t>(datagram.data().size()));
 
         if (packet.isBundle())
         {
-            OSCPP::Server::Bundle bundle(packet);
+	        const OSCPP::Server::Bundle bundle(packet);
             OSCPP::Server::PacketStream packets(bundle.packets());
 
             while (!packets.atEnd())

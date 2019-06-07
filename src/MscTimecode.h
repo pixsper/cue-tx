@@ -44,7 +44,7 @@ struct MscTimecode
     int _minutes;
     int _seconds;
     int _frames;
-    int _subFrames;
+    int _subFrames{};
 
     bool _isNegative;
     bool _isColorFrame;
@@ -53,16 +53,16 @@ struct MscTimecode
 
 public:
     MscTimecode();
-    MscTimecode(int hours, int minutes, int seconds, int frames, int subFrames = 0,
+    MscTimecode(MidiTimecodeFramerate framerate, int hours, int minutes, int seconds, int frames, int subFrames = 0,
                 bool isNegative = false, bool isColorFrame = false);
-    MscTimecode(int hours, int minutes, int seconds, int frames,
+    MscTimecode(MidiTimecodeFramerate framerate, int hours, int minutes, int seconds, int frames,
                 MidiTimecodeStatusFlags status = MidiTimecodeStatusFlags::None, bool isNegative = false, bool isColorFrame = false );
 
     static bool FromByteArray(const QByteArray& data, MscTimecode& value);
 
-    QByteArray ToByteArray();
+    QByteArray ToByteArray() const;
 };
 
-QDataStream& operator>>(QDataStream& stream, MscTimecode& cueId);
-QDataStream& operator<<(QDataStream& stream, MscTimecode& cueId);
+QDataStream& operator>>(QDataStream& stream, MscTimecode& timecode);
+QDataStream& operator<<(QDataStream& stream, MscTimecode& timecode);
 

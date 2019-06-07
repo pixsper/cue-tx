@@ -46,7 +46,7 @@ public:
     {
         quint16 port = SETTINGS_PORT_DEFAULT;
 
-        auto it = settings.find(SETTINGS_PORT_KEY);
+        const auto it = settings.find(SETTINGS_PORT_KEY);
 
         if (it != settings.end())
             port = static_cast<quint16>(it.value().toInt());
@@ -74,13 +74,13 @@ public:
         char headerId1[ID_LENGTH];
         data.readRawData(headerId1, ID_LENGTH);
 
-        if (strncmp(headerId1, MSC_GMAHEADER_ID1, ID_LENGTH))
+        if (strncmp(headerId1, MSC_GMAHEADER_ID1, ID_LENGTH) != 0)
             return;
 
         char headerId2[ID_LENGTH];
         data.readRawData(headerId2, ID_LENGTH);
 
-        if (strncmp(headerId2, MSC_GMAHEADER_ID2, ID_LENGTH))
+        if (strncmp(headerId2, MSC_GMAHEADER_ID2, ID_LENGTH) != 0)
             return;
 
         qint32 packetLength;

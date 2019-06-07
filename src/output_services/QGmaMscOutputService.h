@@ -38,22 +38,22 @@ class QGmaMscOutputService : public QCueTxOutputService
 
 public:
     explicit QGmaMscOutputService(QObject *parent = nullptr)
-        : QCueTxOutputService(parent),
-          _udpSocket(new QUdpSocket(this))
+	    : QCueTxOutputService(parent), 
+			_hostPort(SETTINGS_HOSTPORT_DEFAULT),
+			_udpSocket(new QUdpSocket(this))
     {
-
     }
 
-    virtual bool start(const QVariantMap& settings) override
+    bool start(const QVariantMap& settings) override
     {
-        auto itIp = settings.find(SETTINGS_HOSTIP_NAME);
+	    const auto itIp = settings.find(SETTINGS_HOSTIP_NAME);
 
         if (itIp != settings.end())
             _hostIp = QHostAddress(itIp.value().toString());
         else
             _hostIp = QHostAddress(SETTINGS_HOSTIP_DEFAULT);
 
-        auto itPort = settings.find(SETTINGS_HOSTPORT_NAME);
+	    const auto itPort = settings.find(SETTINGS_HOSTPORT_NAME);
 
         if (itPort != settings.end())
             _hostPort = static_cast<quint16>(itPort.value().toInt());

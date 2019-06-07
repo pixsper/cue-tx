@@ -10,13 +10,18 @@ class QRtMidiIn : public QObject
 
     Q_OBJECT
 public:
-    QRtMidiIn(QObject *parent, RtMidi::Api api = RtMidi::Api::UNSPECIFIED, QString clientName = "RtMidi Input Client", int queueSizeLimit = 100);
-    QRtMidiIn(RtMidi::Api api = RtMidi::Api::UNSPECIFIED, QString clientName = "RtMidi Input Client", int queueSizeLimit = 100);
+    QRtMidiIn(QObject *parent, RtMidi::Api api = RtMidi::Api::UNSPECIFIED, const QString& clientName = "RtMidi Input Client", int queueSizeLimit = 100);
+    QRtMidiIn(RtMidi::Api api = RtMidi::Api::UNSPECIFIED, const QString& clientName = "RtMidi Input Client", int queueSizeLimit = 100);
     ~QRtMidiIn();
 
+    QRtMidiIn(const QRtMidiIn& other) = delete;
+    QRtMidiIn(QRtMidiIn&& other) noexcept = delete;
+    QRtMidiIn& operator=(const QRtMidiIn& other) = delete;
+    QRtMidiIn& operator=(QRtMidiIn&& other) noexcept = delete;
+
     RtMidi::Api getCurrentApi();
-    void openPort(int portNumber = 0, const QString portName = "RtMidi Input");
-    void openVirtualPort(const QString portName = "RtMidi Input");
+    void openPort(int portNumber = 0, const QString& portName = "RtMidi Input");
+    void openVirtualPort(const QString& portName = "RtMidi Input");
     void closePort();
     bool isPortOpen() const;
     int getPortCount();
@@ -31,5 +36,5 @@ private:
 
 signals:
     void messageReceived(double timeStamp, const QByteArray& message);
-    void errorReceived(RtMidiError::Type type, const QString errorText);
+    void errorReceived(RtMidiError::Type type, const QString& errorText);
 };

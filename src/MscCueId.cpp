@@ -15,18 +15,16 @@
 
 #include "MscCueId.h"
 
-const QRegularExpression MscCueId::VALID_CUEID("^\\d+(?:\\.\\d+)*$");
+const QRegularExpression MscCueId::VALID_CUEID(R"(^\d+(?:\.\d+)*$)");
 
 bool MscCueId::isValidMscCue(const QString& mscCue)
 {
-    auto match = VALID_CUEID.match(mscCue);
+	const auto match = VALID_CUEID.match(mscCue);
     return match.hasMatch();
 }
 
 MscCueId::MscCueId()
-{
-
-}
+= default;
 
 MscCueId::MscCueId(const QString& cueString)
     : _cueParts(cueString.split('.'))
@@ -66,10 +64,10 @@ bool MscCueId::operator!=(const MscCueId& rhs) const
 
 bool MscCueId::isValid() const
 {
-    if (_cueParts.size() == 0)
+    if (_cueParts.empty())
         return false;
 
-    QRegularExpression cuePartRegex("\\d+");
+    const QRegularExpression cuePartRegex("\\d+");
 
     for(const auto& part : _cueParts)
     {

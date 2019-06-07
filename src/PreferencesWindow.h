@@ -51,13 +51,13 @@ public:
 private:
     void loadSettings()
     {
-        QSettings s;
+	    const QSettings s;
 
         _inputSourceComboBox.setCurrentIndex(s.value("inputSource", 0).value<int>());
 
     }
 
-    void saveSettings()
+    void saveSettings() const
     {
         QSettings s;
 

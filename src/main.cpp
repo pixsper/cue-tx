@@ -21,33 +21,36 @@
 #include "PreferencesWindow.h"
 #include "QMscRouter.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    QString version(GIT_VERSION);
+	QString version(GIT_VERSION);
 
-    QApplication a(argc, argv);
-    a.setQuitOnLastWindowClosed(false);
+	QApplication a(argc, argv);
+	QApplication::setQuitOnLastWindowClosed(false);
 
-    QCoreApplication::setOrganizationName("The Impersonal Stereo");
-    QCoreApplication::setOrganizationDomain("theimpersonalstereo.com");
-    QCoreApplication::setApplicationName("CueTX");
+	QCoreApplication::setOrganizationName("The Impersonal Stereo");
+	QCoreApplication::setOrganizationDomain("theimpersonalstereo.com");
+	QCoreApplication::setApplicationName("CueTX");
 
-    QIcon icon(":/trayicon.png");
-    QSystemTrayIcon tray(icon);
+	const QIcon icon(":/trayicon.png");
+	QSystemTrayIcon tray(icon);
 
-    PreferencesWindow preferencesWindow;
+	PreferencesWindow preferencesWindow;
 
-    QMenu* trayMenu = new QMenu();
-    trayMenu->addAction("&Preferences...", [&](){ preferencesWindow.show(); });
-    trayMenu->addSeparator();
-    trayMenu->addAction("&About CueTX", [&]() { QMessageBox::about(nullptr, "CueTX", "CueTX by David Butler\n" + version); });
-    trayMenu->addSeparator();
-    trayMenu->addAction("&Quit", [](){ QApplication::quit(); });
+	auto trayMenu = new QMenu();
+	trayMenu->addAction("&Preferences...", [&]() { preferencesWindow.show(); });
+	trayMenu->addSeparator();
+	trayMenu->addAction("&About CueTX", [&]()
+	{
+		QMessageBox::about(nullptr, "CueTX", "CueTX by David Butler\n" + version);
+	});
+	trayMenu->addSeparator();
+	trayMenu->addAction("&Quit", []() { QApplication::quit(); });
 
-    tray.show();
-    tray.setContextMenu(trayMenu);
+	tray.show();
+	tray.setContextMenu(trayMenu);
 
-    QMscRouter router;
+	QMscRouter router;
 
-    return a.exec();
+	return QApplication::exec();
 }

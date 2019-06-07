@@ -15,7 +15,6 @@
 
 #pragma once
 
-#include <QStringList>
 #include <QRegularExpression>
 #include <QDataStream>
 
