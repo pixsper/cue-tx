@@ -98,7 +98,7 @@ public slots:
                 else
                 {
                     packet.openMessage("/reset", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.data())).closeMessage();
+                        .string(reinterpret_cast<const char*>(message._cueNumber.toString().toStdString().c_str())).closeMessage();
                 }
                 break;
 
@@ -111,7 +111,7 @@ public slots:
                 else
                 {
                     packet.openMessage("/go", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.data())).closeMessage();
+                        .string(reinterpret_cast<const char*>(message._cueNumber.toString().toStdString().c_str())).closeMessage();
                 }
                 break;
 
@@ -123,7 +123,7 @@ public slots:
                 else
                 {
                     packet.openMessage("/pause", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.data())).closeMessage();
+                        .string(reinterpret_cast<const char*>(message._cueNumber.toString().toStdString().c_str())).closeMessage();
                 }
                 break;
 
@@ -135,7 +135,7 @@ public slots:
                 else
                 {
                     packet.openMessage("/resume", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.data())).closeMessage();
+                        .string(reinterpret_cast<const char*>(message._cueNumber.toString().toStdString().c_str())).closeMessage();
                 }
                 break;
 
@@ -143,7 +143,7 @@ public slots:
                 if (message._cueNumber != "")
                 {
                     packet.openMessage("/load", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.data())).closeMessage();
+                        .string(reinterpret_cast<const char*>(message._cueNumber.toString().toStdString().c_str())).closeMessage();
                 }
                 break;
 

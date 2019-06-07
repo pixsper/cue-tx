@@ -91,7 +91,7 @@ public slots:
                 else
                 {
                     packet.openMessage("/d3/showcontrol/cue", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.data())).closeMessage();
+                        .string(message._cueNumber.toString().toStdString().c_str()).closeMessage();
                 }
                 break;
 
@@ -106,7 +106,7 @@ public slots:
 
             case MscCommandType::OpenCueList:
                 packet.openMessage("d3/showcontrol/trackid", 1)
-                        .string(reinterpret_cast<const char*>(message._cueList.data())).closeMessage();
+                        .string(message._cueList.toString().toStdString().c_str()).closeMessage();
                 break;
 
             default:

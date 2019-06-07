@@ -153,6 +153,11 @@ public:
     static bool FromByteArray(const QByteArray& array, MscMessage& message);
 
     MscMessage();
+
+    QByteArray ToByteArray()
+    {
+        return QByteArray();
+    }
 };
 
 

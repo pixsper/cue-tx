@@ -23,7 +23,10 @@ class QCueTxInputService : public QObject
     Q_OBJECT
 
 protected:
-    explicit QCueTxInputService(QObject* parent);
+    explicit QCueTxInputService(QObject* parent)
+        : QObject(parent)
+    {
+    }
 
 public:
     virtual bool start(const QVariantMap& configuration) = 0;

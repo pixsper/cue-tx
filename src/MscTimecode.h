@@ -26,21 +26,7 @@ enum class MidiTimecodeFramerate : quint8
     F30Nd = 3,
 };
 
-int getFrameCount(MidiTimecodeFramerate framerate)
-{
-    switch(framerate)
-    {
-        case MidiTimecodeFramerate::F24:
-            return 24;
-
-        case MidiTimecodeFramerate::F25:
-            return 25;
-
-        case MidiTimecodeFramerate::F30Df:
-        case MidiTimecodeFramerate::F30Nd:
-            return 30;
-    }
-}
+int getFrameCount(MidiTimecodeFramerate framerate);
 
 enum class MidiTimecodeStatusFlags : quint8
 {

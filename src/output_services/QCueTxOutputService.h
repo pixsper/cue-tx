@@ -22,7 +22,11 @@ class QCueTxOutputService : public QObject
 {
     Q_OBJECT
 protected:
-    explicit QCueTxOutputService(QObject *parent);
+    explicit QCueTxOutputService(QObject *parent)
+        : QObject(parent)
+    {
+
+    }
 
 public:
     virtual bool start(const QVariantMap& configuration) = 0;

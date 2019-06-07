@@ -15,6 +15,23 @@
 
 #include "MscTimecode.h"
 
+int getFrameCount(MidiTimecodeFramerate framerate)
+{
+    switch(framerate)
+    {
+        case MidiTimecodeFramerate::F24:
+            return 24;
+
+        case MidiTimecodeFramerate::F25:
+            return 25;
+
+        case MidiTimecodeFramerate::F30Df:
+        case MidiTimecodeFramerate::F30Nd:
+            return 30;
+    }
+}
+
+
 MscTimecode::MscTimecode()
     : _hours(0),
     _minutes(0),
