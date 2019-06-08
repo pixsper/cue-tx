@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "QCueTxInputService.h"
+#include "QCueTxInputService.hpp"
 #include <QUdpSocket>
 #include <QNetworkDatagram>
 #include <QDataStream>

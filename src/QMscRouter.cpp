@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CueTX.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "QMscRouter.h"
+#include "QMscRouter.hpp"
 
 QMscRouter::QMscRouter(QObject* parent)
     : QObject(parent),

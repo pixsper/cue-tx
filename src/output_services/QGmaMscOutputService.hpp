@@ -17,7 +17,7 @@
 
 #include <QHash>
 #include <QUdpSocket>
-#include "QCueTxOutputService.h"
+#include "QCueTxOutputService.hpp"
 
 class QGmaMscOutputService : public QCueTxOutputService
 {

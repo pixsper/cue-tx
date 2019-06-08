@@ -16,8 +16,8 @@
 #pragma once
 
 #include <QVariant>
-#include "QCueTxOutputService.h"
-#include "../qmidi/QRtMidiOut.h"
+#include "QCueTxOutputService.hpp"
+#include "../qmidi/QRtMidiOut.hpp"
 
 class QMidiMscOutputService : public QCueTxOutputService
 {

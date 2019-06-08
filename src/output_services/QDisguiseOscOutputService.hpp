@@ -17,7 +17,7 @@
 
 #include <QHash>
 #include <QUdpSocket>
-#include "QCueTxOutputService.h"
+#include "QCueTxOutputService.hpp"
 #include "oscpp/client.hpp"
 
 class QDisguiseOscOutputService : public QCueTxOutputService

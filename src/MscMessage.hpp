@@ -17,8 +17,8 @@
 
 #include <QtGlobal>
 #include <QByteArray>
-#include "MscCueId.h"
-#include "MscTimecode.h"
+#include "MscCueId.hpp"
+#include "MscTimecode.hpp"
 
 enum class MscCommandType : quint8
 {

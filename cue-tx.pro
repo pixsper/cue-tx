@@ -19,32 +19,32 @@ SOURCES += \
         src/MscCueId.cpp \
         src/MscMessage.cpp \
         src/MscTimecode.cpp \
-        src/PreferencesWindow.cpp \
         src/QMscRouter.cpp \
         src/ServiceFactory.cpp \
         src/qmidi/QRtMidiIn.cpp \
         src/qmidi/QRtMidiOut.cpp \
-        src/main.cpp
+        src/main.cpp \
+        src/ui/QPreferencesWindow.cpp
 
 HEADERS += \
-        src/MscCueId.h \
-        src/MscMessage.h \
-        src/MscTimecode.h \
-        src/PreferencesWindow.h \
-        src/QMscRouter.h \
-        src/ServiceFactory.h \
-        src/ServiceTypes.h \
-        src/input_services/QCueTxInputService.h \
-        src/input_services/QEosOscInputService.h \
-        src/input_services/QGmaMscInputService.h \
-        src/input_services/QMidiMscInputService.h \
-        src/output_services/QCueTxOutputService.h \
-        src/output_services/QDisguiseOscOutputService.h \
-        src/output_services/QGmaMscOutputService.h \
-        src/output_services/QMidiMscOutputService.h \
-        src/output_services/QQLabOscOutputService.h \
-        src/qmidi/QRtMidiIn.h \
-        src/qmidi/QRtMidiOut.h
+        src/MscCueId.hpp \
+        src/MscMessage.hpp \
+        src/MscTimecode.hpp \
+        src/QMscRouter.hpp \
+        src/ServiceFactory.hpp \
+        src/ServiceTypes.hpp \
+        src/input_services/QCueTxInputService.hpp \
+        src/input_services/QEosOscInputService.hpp \
+        src/input_services/QGmaMscInputService.hpp \
+        src/input_services/QMidiMscInputService.hpp \
+        src/output_services/QCueTxOutputService.hpp \
+        src/output_services/QDisguiseOscOutputService.hpp \
+        src/output_services/QGmaMscOutputService.hpp \
+        src/output_services/QMidiMscOutputService.hpp \
+        src/output_services/QQLabOscOutputService.hpp \
+        src/qmidi/QRtMidiIn.hpp \
+        src/qmidi/QRtMidiOut.hpp \
+        src/ui/QPreferencesWindow.hpp
 
 
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -76,4 +76,7 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/third-party
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/rtmidi.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/rtmidid.lib
 else:macx: PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/librtmidi.a
+
+FORMS += \
+    src/ui/QPreferencesWindow.ui
 

@@ -13,14 +13,14 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CueTX.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "ServiceFactory.h"
-#include "input_services/QMidiMscInputService.h"
-#include "input_services/QGmaMscInputService.h"
-#include "input_services/QEosOscInputService.h"
-#include "output_services/QMidiMscOutputService.h"
-#include "output_services/QGmaMscOutputService.h"
-#include "output_services/QDisguiseOscOutputService.h"
-#include "output_services/QQLabOscOutputService.h"
+#include "ServiceFactory.hpp"
+#include "input_services/QMidiMscInputService.hpp"
+#include "input_services/QGmaMscInputService.hpp"
+#include "input_services/QEosOscInputService.hpp"
+#include "output_services/QMidiMscOutputService.hpp"
+#include "output_services/QGmaMscOutputService.hpp"
+#include "output_services/QDisguiseOscOutputService.hpp"
+#include "output_services/QQLabOscOutputService.hpp"
 
 namespace ServiceFactory
 {

@@ -18,8 +18,8 @@
 #include <QSystemTrayIcon>
 #include <QMessageBox>
 
-#include "PreferencesWindow.h"
-#include "QMscRouter.h"
+#include "ui/QPreferencesWindow.hpp"
+#include "QMscRouter.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -35,7 +35,8 @@ int main(int argc, char* argv[])
 	const QIcon icon(":/trayicon.png");
 	QSystemTrayIcon tray(icon);
 
-	PreferencesWindow preferencesWindow;
+    QPreferencesWindow preferencesWindow;
+    preferencesWindow.setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
 
 	auto trayMenu = new QMenu();
 	trayMenu->addAction("&Preferences...", [&]() { preferencesWindow.show(); });

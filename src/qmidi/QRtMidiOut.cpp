@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CueTX.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "QRtMidiOut.h"
+#include "QRtMidiOut.hpp"
 
 QRtMidiOut::QRtMidiOut(QObject* parent, RtMidi::Api api, const QString& clientName)
     : QObject(parent),

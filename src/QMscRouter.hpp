@@ -15,12 +15,26 @@
 
 #pragma once
 
-#include "ServiceTypes.h"
-#include "input_services/QCueTxInputService.h"
-#include "output_services/QCueTxOutputService.h"
+#include <QObject>
+#include "ServiceTypes.hpp"
+#include "ServiceFactory.hpp"
+#include "input_services/QCueTxInputService.hpp"
+#include "output_services/QCueTxOutputService.hpp"
 
-namespace ServiceFactory
+class QMscRouter : public QObject
 {
-    QCueTxInputService* createInputService(QObject* parent, InputServiceType serviceType);
-    QCueTxOutputService* createOutputService(QObject* parent, OutputServiceType serviceType);
-}
+    Q_OBJECT
+
+    InputServiceType _inputServiceType;
+    QCueTxInputService* _inputService;
+
+    OutputServiceType _outputServiceType;
+    QCueTxOutputService* _outputService;
+
+public:
+    explicit QMscRouter(QObject *parent = nullptr);
+
+    void start(const QVariantMap& inputConfiguration, const QVariantMap& outputConfiguration);
+
+    void stop();
+};

@@ -16,7 +16,7 @@
 #pragma once
 
 #include <QObject>
-#include "../MscMessage.h"
+#include "../MscMessage.hpp"
 
 class QCueTxInputService : public QObject
 {
