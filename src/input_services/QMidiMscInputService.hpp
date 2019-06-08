@@ -16,7 +16,7 @@
 #pragma once
 
 #include "QCueTxInputService.hpp"
-#include "../qmidi/QRtMidiIn.hpp"
+#include "../qrtmidi/QRtMidiIn.hpp"
 #include <QVariant>
 
 class QMidiMscInputService : public QCueTxInputService

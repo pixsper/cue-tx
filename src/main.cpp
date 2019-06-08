@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     preferencesWindow.setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
 
 	auto trayMenu = new QMenu();
-	trayMenu->addAction("&Preferences...", [&]() { preferencesWindow.show(); });
+    trayMenu->addAction("&Preferences...", [&]() { preferencesWindow.refreshAndShow(); });
 	trayMenu->addSeparator();
 	trayMenu->addAction("&About CueTX", [&]()
 	{

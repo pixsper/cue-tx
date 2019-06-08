@@ -27,16 +27,19 @@ QMscRouter::QMscRouter(QObject* parent)
 
 void QMscRouter::start(const QVariantMap& inputConfiguration, const QVariantMap& outputConfiguration)
 {
-    _inputService = ServiceFactory::createInputService(this, _inputServiceType);
-    _outputService = ServiceFactory::createOutputService(this, _outputServiceType);
+    _inputService = ServiceFactory::createInputService(_inputServiceType, this);
+    _outputService = ServiceFactory::createOutputService(_outputServiceType, this);
 
     if (_inputService == nullptr || _outputService == nullptr)
         return;
 
     connect(_inputService, &QCueTxInputService::messageReceived, _outputService, &QCueTxOutputService::sendMessage);
 
-    _inputService->start(inputConfiguration);
-    _outputService->start(outputConfiguration);
+    if (_inputService != nullptr)
+        _inputService->start(inputConfiguration);
+
+    if (_outputService != nullptr)
+        _outputService->start(outputConfiguration);
 }
 
 void QMscRouter::stop()

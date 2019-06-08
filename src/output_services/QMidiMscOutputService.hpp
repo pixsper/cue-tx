@@ -17,7 +17,7 @@
 
 #include <QVariant>
 #include "QCueTxOutputService.hpp"
-#include "../qmidi/QRtMidiOut.hpp"
+#include "../qrtmidi/QRtMidiOut.hpp"
 
 class QMidiMscOutputService : public QCueTxOutputService
 {

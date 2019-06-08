@@ -33,6 +33,7 @@
       <property name="title">
        <string>Settings</string>
       </property>
+      <layout class="QVBoxLayout" name="verticalLayout"/>
      </widget>
     </item>
     <item row="3" column="0" colspan="2">
@@ -40,6 +41,7 @@
       <property name="title">
        <string>Settings</string>
       </property>
+      <layout class="QHBoxLayout" name="horizontalLayout"/>
      </widget>
     </item>
     <item row="0" column="0">
@@ -123,28 +125,7 @@
      </spacer>
     </item>
     <item row="0" column="1">
-     <widget class="QComboBox" name="comboBoxInput">
-      <item>
-       <property name="text">
-        <string>MSC (MIDI)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>MSC (GrandMA 2 via Ethernet)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>OSC (ETC Eos)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>OSC (Custom)</string>
-       </property>
-      </item>
-     </widget>
+     <widget class="QComboBox" name="comboBoxInput"/>
     </item>
     <item row="5" column="1">
      <widget class="QComboBox" name="comboBoxOutput">
@@ -154,41 +135,6 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <item>
-       <property name="text">
-        <string>None (Log only)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>MSC (MIDI)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>MSC (GrandMA2 via Ethernet)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>OSC (disguise/d3)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>OSC (ETC Eos)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>OSC (QLab)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>OSC (Custom)</string>
-       </property>
-      </item>
      </widget>
     </item>
     <item row="4" column="0" colspan="2">
@@ -210,22 +156,5 @@
  <resources>
   <include location="../../resources/resources.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>pushButtonCancel</sender>
-   <signal>clicked()</signal>
-   <receiver>QPreferencesWindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>174</x>
-     <y>378</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>151</x>
-     <y>199</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

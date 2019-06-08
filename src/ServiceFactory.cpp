@@ -24,7 +24,7 @@
 
 namespace ServiceFactory
 {
-    QCueTxInputService* createInputService(QObject* parent, InputServiceType serviceType)
+    QCueTxInputService* createInputService(InputServiceType serviceType, QObject* parent)
     {
         switch (serviceType)
         {
@@ -40,13 +40,16 @@ namespace ServiceFactory
             case InputServiceType::EosOsc:
                 return new QEosOscInputService(parent);
 
+            case InputServiceType::CustomOsc:
+                return nullptr;
+
             default:
                 Q_ASSERT(false); // Unknown input service type
                 return nullptr;
         }
     }
 
-    QCueTxOutputService* createOutputService(QObject* parent, OutputServiceType serviceType)
+    QCueTxOutputService* createOutputService(OutputServiceType serviceType, QObject* parent)
     {
         switch (serviceType)
         {
@@ -64,6 +67,12 @@ namespace ServiceFactory
 
             case OutputServiceType::QLabOsc:
                 return new QQLabOscOutputService(parent);
+
+            case OutputServiceType::EosOsc:
+                return nullptr;
+
+            case OutputServiceType::CustomOsc:
+                return nullptr;
 
             default:
                 Q_ASSERT(false); // Unknown output service type

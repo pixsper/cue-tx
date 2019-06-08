@@ -21,6 +21,6 @@
 
 namespace ServiceFactory
 {
-    QCueTxInputService* createInputService(QObject* parent, InputServiceType serviceType);
-    QCueTxOutputService* createOutputService(QObject* parent, OutputServiceType serviceType);
+    QCueTxInputService* createInputService(InputServiceType serviceType, QObject* parent);
+    QCueTxOutputService* createOutputService(OutputServiceType serviceType, QObject* parent);
 }
