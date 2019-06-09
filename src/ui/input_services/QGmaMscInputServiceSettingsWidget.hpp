@@ -19,24 +19,19 @@
 
 namespace Ui
 {
-    class QMidiMscInputServiceSettingsWidget;
+    class QGmaMscInputServiceSettingsWidget;
 }
 
-class QMidiMscInputServiceSettingsWidget : public QSettingsWidget
+class QGmaMscInputServiceSettingsWidget : public QSettingsWidget
 {
     Q_OBJECT
 
-    Ui::QMidiMscInputServiceSettingsWidget* ui;
+    Ui::QGmaMscInputServiceSettingsWidget* ui;
 
 public:
-    explicit QMidiMscInputServiceSettingsWidget(QWidget* parent = nullptr);
-    ~QMidiMscInputServiceSettingsWidget() override;
-
-    void refresh() override;
+    explicit QGmaMscInputServiceSettingsWidget(QWidget* parent = nullptr);
+    ~QGmaMscInputServiceSettingsWidget() override;
 
     void setDefaults() override;
-
-private:
-    void updateMidiPortList();
 };
 

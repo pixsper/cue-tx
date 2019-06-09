@@ -20,9 +20,17 @@
 
 #include "ui/QPreferencesWindow.hpp"
 #include "QMscRouter.hpp"
+#include "qrtmidi/QRtMidiIn.hpp"
 
 int main(int argc, char* argv[])
 {
+#ifdef Q_OS_MAC
+    // On Mac OS, creating an RtMidiIn instance after closing one causes a CoreMIDI error.
+    // To avoid this, we keep an instance open for the application lifetime.
+    // TODO: Remove this once the RtMidi bug is fixed. https://github.com/thestk/rtmidi/issues/155
+    QRtMidiIn midiInDummy;
+#endif
+
 	QString version(GIT_VERSION);
 
 	QApplication a(argc, argv);
@@ -36,7 +44,11 @@ int main(int argc, char* argv[])
 	QSystemTrayIcon tray(icon);
 
     QPreferencesWindow preferencesWindow;
+#ifdef Q_OS_MAC
+    preferencesWindow.setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
+#else
     preferencesWindow.setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+#endif
 
 	auto trayMenu = new QMenu();
     trayMenu->addAction("&Preferences...", [&]() { preferencesWindow.refreshAndShow(); });

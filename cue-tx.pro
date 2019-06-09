@@ -21,11 +21,13 @@ SOURCES += \
         src/MscTimecode.cpp \
         src/QMscRouter.cpp \
         src/ServiceFactory.cpp \
+        src/input_services/QGmaMscInputService.cpp \
         src/qrtmidi/QRtMidiIn.cpp \
         src/qrtmidi/QRtMidiOut.cpp \
         src/main.cpp \
         src/ui/QPreferencesWindow.cpp \
         src/ui/SettingsWidgetFactory.cpp \
+        src/ui/input_services/QGmaMscInputServiceSettingsWidget.cpp \
         src/ui/input_services/QMidiMscInputServiceSettingsWidget.cpp
 
 HEADERS += \
@@ -49,8 +51,13 @@ HEADERS += \
         src/ui/QPreferencesWindow.hpp \
         src/ui/QSettingsWidget.hpp \
         src/ui/SettingsWidgetFactory.hpp \
+        src/ui/input_services/QGmaMscInputServiceSettingsWidget.hpp \
         src/ui/input_services/QMidiMscInputServiceSettingsWidget.hpp
 
+FORMS += \
+    src/ui/QPreferencesWindow.ui \
+    src/ui/input_services/QGmaMscInputServiceSettingsWidget.ui \
+    src/ui/input_services/QMidiMscInputServiceSettingsWidget.ui
 
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
@@ -81,8 +88,4 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/third-party
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/rtmidi.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/rtmidid.lib
 else:macx: PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/librtmidi.a
-
-FORMS += \
-    src/ui/QPreferencesWindow.ui \
-    src/ui/input_services/QMidiMscInputServiceSettingsWidget.ui
 

@@ -14,8 +14,9 @@ protected:
     }
 
 public:
-    virtual ~QSettingsWidget() { };
+    virtual ~QSettingsWidget() { }
     virtual void refresh() { }
+    virtual void setDefaults() = 0;
 
 signals:
 
