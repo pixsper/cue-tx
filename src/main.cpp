@@ -14,13 +14,19 @@
 // License along with CueTX.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QMenu>
 #include <QSystemTrayIcon>
 #include <QMessageBox>
 
 #include "ui/QPreferencesWindow.hpp"
 #include "QMscRouter.hpp"
-#include "qrtmidi/QRtMidiIn.hpp"
+#include "QSettingsManager.hpp"
+
+#ifdef Q_OS_MAC
+    // TODO: See below
+    #include "qrtmidi/QRtMidiIn.hpp"
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -39,9 +45,29 @@ int main(int argc, char* argv[])
 	QCoreApplication::setOrganizationName("The Impersonal Stereo");
 	QCoreApplication::setOrganizationDomain("theimpersonalstereo.com");
 	QCoreApplication::setApplicationName("CueTX");
+    QCoreApplication::setApplicationVersion(version);
 
-	const QIcon icon(":/trayicon.png");
-	QSystemTrayIcon tray(icon);
+
+
+
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Cue TX show control routing utility");
+    parser.addVersionOption();
+
+    QCommandLineOption cleanStartOption({ "c", "clean" }, "Clear all application settings and start as if a clean installation" );
+    parser.addOption(cleanStartOption);
+
+    parser.process(a);
+
+
+
+    QSettingsManager settingsManager;
+    QMscRouter router;
+
+    if (parser.isSet(cleanStartOption))
+        settingsManager.clearSettings();
+
+
 
     QPreferencesWindow preferencesWindow;
 #ifdef Q_OS_MAC
@@ -49,6 +75,18 @@ int main(int argc, char* argv[])
 #else
     preferencesWindow.setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
 #endif
+
+    QObject::connect(&preferencesWindow, &QPreferencesWindow::settingsChanged, [&](const QVariantMap& map)
+    {
+        settingsManager.saveSettings(map);
+
+        router.stop();
+        router.start(settingsManager.loadSettings());
+    });
+
+
+    const QIcon icon(":/trayicon.png");
+    QSystemTrayIcon tray(icon);
 
 	auto trayMenu = new QMenu();
     trayMenu->addAction("&Preferences...", [&]() { preferencesWindow.refreshAndShow(); });
@@ -63,7 +101,10 @@ int main(int argc, char* argv[])
 	tray.show();
 	tray.setContextMenu(trayMenu);
 
-	QMscRouter router;
+
+    if (settingsManager.isSettingsEmpty())
+        preferencesWindow.refreshAndShow();
+
 
 	return QApplication::exec();
 }

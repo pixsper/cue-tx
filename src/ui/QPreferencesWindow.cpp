@@ -17,7 +17,7 @@
 #include "ui_QPreferencesWindow.h"
 #include "SettingsWidgetFactory.hpp"
 
-#include <QFormLayout>
+#include <QPushButton>
 
 
 const QList<QPair<InputServiceType, QString>> QPreferencesWindow::inputServiceOptionList
@@ -51,7 +51,15 @@ QPreferencesWindow::QPreferencesWindow(QWidget *parent) :
     for(const auto& item : outputServiceOptionList)
         ui->comboBoxOutput->addItem(item.second, static_cast<int>(item.first));
 
-    QMetaObject::connectSlotsByName(this);
+    connect(ui->comboBoxInput, qOverload<int>(&QComboBox::currentIndexChanged), this, &QPreferencesWindow::onComboBoxInputCurrentIndexChanged);
+    connect(ui->comboBoxOutput, qOverload<int>(&QComboBox::currentIndexChanged), this, &QPreferencesWindow::onComboBoxOutputCurrentIndexChanged);
+    connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &QPreferencesWindow::onOkButtonClicked);
+    connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &QPreferencesWindow::onApplyButtonClicked);
+    connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &QPreferencesWindow::onCancelButtonClicked);
+
+    updateInputSettingsWidget();
+    updateOutputSettingsWidget();
+    updateVisibility();
 }
 
 QPreferencesWindow::~QPreferencesWindow()
@@ -68,6 +76,16 @@ void QPreferencesWindow::refreshAndShow()
         reinterpret_cast<QSettingsWidget*>(ui->groupBoxOutputSettings->layout()->children().front())->refresh();
 
     show();
+}
+
+void QPreferencesWindow::setSettings(const QVariantMap& settings)
+{
+
+}
+
+QVariantMap QPreferencesWindow::getSettings()
+{
+    return QVariantMap();
 }
 
 void QPreferencesWindow::updateVisibility()
@@ -108,19 +126,30 @@ void QPreferencesWindow::updateOutputSettingsWidget()
         ui->groupBoxOutputSettings->layout()->addWidget(outputSettingsWidget);
 }
 
-void QPreferencesWindow::on_comboBoxInput_currentIndexChanged()
+void QPreferencesWindow::onComboBoxInputCurrentIndexChanged(int index)
 {
     updateInputSettingsWidget();
     updateVisibility();
 }
 
-void QPreferencesWindow::on_comboBoxOutput_currentIndexChanged()
+void QPreferencesWindow::onComboBoxOutputCurrentIndexChanged(int index)
 {
     updateOutputSettingsWidget();
     updateVisibility();
 }
 
-void QPreferencesWindow::on_buttonBox_clicked(QAbstractButton* button)
+void QPreferencesWindow::onOkButtonClicked()
 {
+    emit settingsChanged(getSettings());
+    close();
+}
 
+void QPreferencesWindow::onApplyButtonClicked()
+{
+    emit settingsChanged(getSettings());
+}
+
+void QPreferencesWindow::onCancelButtonClicked()
+{
+    close();
 }

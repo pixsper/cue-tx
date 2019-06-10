@@ -22,15 +22,9 @@
 
 class QDisguiseOscOutputService : public QCueTxOutputService
 {
-Q_OBJECT
+    Q_OBJECT
 
 	const int UDP_BUFFER_SIZE = 128;
-
-	const char* SETTINGS_HOSTIP_NAME = "host_ip";
-	const char* SETTINGS_HOSTIP_DEFAULT = "127.0.0.1";
-
-	const char* SETTINGS_HOSTPORT_NAME = "host_port";
-	const quint16 SETTINGS_HOSTPORT_DEFAULT = 7401;
 
 
 	QHostAddress _hostIp;
@@ -40,82 +34,30 @@ Q_OBJECT
 
 
 public:
-	explicit QDisguiseOscOutputService(QObject* parent = nullptr)
-		: QCueTxOutputService(parent),
-		  _hostIp(SETTINGS_HOSTIP_DEFAULT),
-		  _hostPort(SETTINGS_HOSTPORT_DEFAULT),
-		  _udpSocket(new QUdpSocket(this))
-	{
-	}
+    static const QString SETTINGS_HOSTIP_KEY;
+    static const QString SETTINGS_HOSTIP_DEFAULT;
 
-	bool start(const QVariantMap& settings) override
-	{
-		const auto itIp = settings.find(SETTINGS_HOSTIP_NAME);
+    static const QString SETTINGS_HOSTPORT_KEY;
+    static const quint16 SETTINGS_HOSTPORT_DEFAULT = 7401;
 
-		if (itIp != settings.end())
-			_hostIp = QHostAddress(itIp.value().toString());
-		else
-			_hostIp = QHostAddress(SETTINGS_HOSTIP_DEFAULT);
+    static QVariantMap staticDefaultSettings()
+    {
+        return QVariantMap
+        {
+            { SETTINGS_HOSTIP_KEY, SETTINGS_HOSTIP_DEFAULT },
+            { SETTINGS_HOSTPORT_KEY, SETTINGS_HOSTPORT_DEFAULT }
+        };
+    }
 
-		const auto itPort = settings.find(SETTINGS_HOSTPORT_NAME);
 
-		if (itPort != settings.end())
-			_hostPort = static_cast<quint16>(itPort.value().toInt());
-		else
-			_hostPort = SETTINGS_HOSTPORT_DEFAULT;
+    explicit QDisguiseOscOutputService(QObject* parent = nullptr);
 
-		return _hostIp.isNull();
-	}
+    bool start(const QVariantMap& settings) override;
 
-	void stop() override
-	{
-		_hostIp.clear();
-	}
+    void stop() override;
+
+    QVariantMap defaultSettings() const override { return staticDefaultSettings(); }
 
 public slots:
-	void sendMessage(const MscMessage& message) override
-	{
-		if (_hostIp.isNull())
-			return;
-
-		QByteArray buffer(UDP_BUFFER_SIZE, 0);
-		OSCPP::Client::Packet packet(buffer.data(), static_cast<size_t>(buffer.size()));
-
-		switch (message._commandType)
-		{
-		case MscCommandType::Go:
-
-			if (message._cueNumber == "")
-			{
-				packet.openMessage("/d3/showcontrol/nextsection", 0).closeMessage();
-			}
-			else
-			{
-				packet.openMessage("/d3/showcontrol/cue", 1)
-				      .string(message._cueNumber.toString().toStdString().c_str()).closeMessage();
-			}
-			break;
-
-		case MscCommandType::Stop:
-			if (message._cueNumber != "")
-				packet.openMessage("/d3/showcontrol/stop", 0).closeMessage();
-			break;
-
-		case MscCommandType::Reset:
-			packet.openMessage("/d3/showcontrol/returntostart", 0).closeMessage();
-			break;
-
-		case MscCommandType::OpenCueList:
-			packet.openMessage("d3/showcontrol/trackid", 1)
-			      .string(message._cueList.toString().toStdString().c_str()).closeMessage();
-			break;
-
-		default:
-			return;
-		}
-
-		buffer.resize(static_cast<int>(packet.size()));
-
-		_udpSocket->writeDatagram(buffer, _hostIp, _hostPort);
-	}
+    void sendMessage(const MscMessage& message) override;
 };

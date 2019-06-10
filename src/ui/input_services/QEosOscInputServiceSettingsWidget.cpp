@@ -13,32 +13,33 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CueTX.  If not, see <https://www.gnu.org/licenses/>.
 
-#pragma once
+#include "QEosOscInputServiceSettingsWidget.hpp"
+#include "ui_QEosOscInputServiceSettingsWidget.h"
+#include "../../input_services/QEosOscInputService.hpp"
 
-#include "../QSettingsWidget.hpp"
-
-namespace Ui
+QEosOscInputServiceSettingsWidget::QEosOscInputServiceSettingsWidget(QWidget *parent) :
+    QSettingsWidget(parent),
+    ui(new Ui::QEosOscInputServiceSettingsWidget)
 {
-    class QMidiMscInputServiceSettingsWidget;
+    ui->setupUi(this);
 }
 
-class QMidiMscInputServiceSettingsWidget : public QSettingsWidget
+QEosOscInputServiceSettingsWidget::~QEosOscInputServiceSettingsWidget()
 {
-    Q_OBJECT
+    delete ui;
+}
 
-    Ui::QMidiMscInputServiceSettingsWidget* ui;
+void QEosOscInputServiceSettingsWidget::setSettings(const QVariantMap& settings)
+{
 
-public:
-    explicit QMidiMscInputServiceSettingsWidget(QWidget* parent = nullptr);
-    ~QMidiMscInputServiceSettingsWidget() override;
+}
 
-    void refresh() override;
+QVariantMap QEosOscInputServiceSettingsWidget::getSettings()
+{
+    return QVariantMap();
+}
 
-    void setSettings(const QVariantMap& settings) override;
-    QVariantMap getSettings() override;
-    void setDefaultSettings() override;
-
-private:
-    void updateMidiPortList();
-};
-
+void QEosOscInputServiceSettingsWidget::setDefaultSettings()
+{
+	
+}

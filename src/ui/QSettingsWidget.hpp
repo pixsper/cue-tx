@@ -16,7 +16,10 @@ protected:
 public:
     virtual ~QSettingsWidget() { }
     virtual void refresh() { }
-    virtual void setDefaults() = 0;
+
+    virtual void setSettings(const QVariantMap& settings) = 0;
+    virtual QVariantMap getSettings() = 0;
+    virtual void setDefaultSettings() = 0;
 
 signals:
 

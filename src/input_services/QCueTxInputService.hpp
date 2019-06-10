@@ -18,9 +18,11 @@
 #include <QObject>
 #include "../MscMessage.hpp"
 
+
 class QCueTxInputService : public QObject
 {
     Q_OBJECT
+
 
 protected:
     explicit QCueTxInputService(QObject* parent)
@@ -31,6 +33,7 @@ protected:
 public:
     virtual bool start(const QVariantMap& configuration) = 0;
     virtual void stop() = 0;
+    virtual QVariantMap defaultSettings() const = 0;
 
 signals:
     void messageReceived(const MscMessage& message);

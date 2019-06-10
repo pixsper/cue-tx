@@ -2,6 +2,8 @@
 
 #include "input_services/QMidiMscInputServiceSettingsWidget.hpp"
 #include "input_services/QGmaMscInputServiceSettingsWidget.hpp"
+#include "input_services/QEosOscInputServiceSettingsWidget.hpp"
+#include "output_services/QMidiMscOutputServiceSettingsWidget.hpp"
 
 QSettingsWidget* SettingsWidgetFactory::createInputSettingsWidget(InputServiceType serviceType, QWidget* parent)
 {
@@ -17,7 +19,7 @@ QSettingsWidget* SettingsWidgetFactory::createInputSettingsWidget(InputServiceTy
             return new QGmaMscInputServiceSettingsWidget(parent);
 
         case InputServiceType::EosOsc:
-            return nullptr;
+            return new QEosOscInputServiceSettingsWidget(parent);
 
         case InputServiceType::CustomOsc:
             return nullptr;
@@ -36,7 +38,7 @@ QSettingsWidget* SettingsWidgetFactory::createOutputSettingsWidget(OutputService
             return nullptr;
 
         case OutputServiceType::MidiMsc:
-            return nullptr;
+            return new QMidiMscOutputServiceSettingsWidget(parent);
 
         case OutputServiceType::GmaMsc:
             return nullptr;

@@ -15,7 +15,17 @@
 
 #include "QGmaMscInputService.hpp"
 
-const QString QGmaMscInputService::SETTINGS_PORT_KEY = "port";
+const QString QGmaMscInputService::SETTINGS_HOSTPORT_KEY = "in_gma_host_port";
+const QString QGmaMscInputService::SETTINGS_REMOVEZEROPADDING_KEY = "in_gma_remove_zero_padding";
+
+QVariantMap QGmaMscInputService::staticDefaultSettings()
+{
+    return QVariantMap
+    {
+        { SETTINGS_HOSTPORT_KEY, SETTINGS_HOSTPORT_DEFAULT },
+        { SETTINGS_REMOVEZEROPADDING_KEY, SETTINGS_REMOVEZEROPADDING_DEFAULT }
+    };
+}
 
 QGmaMscInputService::QGmaMscInputService(QObject* parent)
     : QCueTxInputService(parent),
@@ -26,21 +36,21 @@ QGmaMscInputService::QGmaMscInputService(QObject* parent)
 
 bool QGmaMscInputService::start(const QVariantMap& settings)
 {
-    quint16 port = SETTINGS_PORT_DEFAULT;
+    quint16 port = SETTINGS_HOSTPORT_DEFAULT;
 
-    const auto it = settings.find(SETTINGS_PORT_KEY);
+    const auto it = settings.find(SETTINGS_HOSTPORT_KEY);
 
     if (it != settings.end())
         port = static_cast<quint16>(it.value().toInt());
 
-    connect(_udpSocket, &QUdpSocket::readyRead, this, &QGmaMscInputService::readPendingDatagrams);
-    return _udpSocket->bind(port, QUdpSocket::ShareAddress);
+    connect(_udpSocket, &QIODevice::readyRead, this, &QGmaMscInputService::readPendingDatagrams);
+    return _udpSocket->bind(port, QAbstractSocket::ShareAddress);
 }
 
 void QGmaMscInputService::stop()
 {
     _udpSocket->disconnectFromHost();
-    disconnect(_udpSocket, &QUdpSocket::readyRead, this, &QGmaMscInputService::readPendingDatagrams);
+    disconnect(_udpSocket, &QIODevice::readyRead, this, &QGmaMscInputService::readPendingDatagrams);
 }
 
 void QGmaMscInputService::processDatagram(const QNetworkDatagram& datagram)

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QMidiMscOutputServiceSettingsWidget</class>
+ <widget class="QWidget" name="QMidiMscOutputServiceSettingsWidget">
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="comboBoxMidiOutPort"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="labelMidiOutPort">
+     <property name="text">
+      <string>MIDI Out Port</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

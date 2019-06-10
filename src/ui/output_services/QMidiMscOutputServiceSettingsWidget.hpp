@@ -19,18 +19,18 @@
 
 namespace Ui
 {
-    class QMidiMscInputServiceSettingsWidget;
+    class QMidiMscOutputServiceSettingsWidget;
 }
 
-class QMidiMscInputServiceSettingsWidget : public QSettingsWidget
+class QMidiMscOutputServiceSettingsWidget : public QSettingsWidget
 {
     Q_OBJECT
 
-    Ui::QMidiMscInputServiceSettingsWidget* ui;
+    Ui::QMidiMscOutputServiceSettingsWidget* ui;
 
 public:
-    explicit QMidiMscInputServiceSettingsWidget(QWidget* parent = nullptr);
-    ~QMidiMscInputServiceSettingsWidget() override;
+    explicit QMidiMscOutputServiceSettingsWidget(QWidget* parent = nullptr);
+    ~QMidiMscOutputServiceSettingsWidget() override;
 
     void refresh() override;
 

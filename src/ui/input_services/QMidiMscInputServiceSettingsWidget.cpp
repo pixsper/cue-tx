@@ -36,7 +36,17 @@ void QMidiMscInputServiceSettingsWidget::refresh()
     updateMidiPortList();
 }
 
-void QMidiMscInputServiceSettingsWidget::setDefaults()
+void QMidiMscInputServiceSettingsWidget::setSettings(const QVariantMap& settings)
+{
+
+}
+
+QVariantMap QMidiMscInputServiceSettingsWidget::getSettings()
+{
+    return QVariantMap();
+}
+
+void QMidiMscInputServiceSettingsWidget::setDefaultSettings()
 {
 
 }
@@ -48,6 +58,27 @@ void QMidiMscInputServiceSettingsWidget::updateMidiPortList()
     QRtMidiIn midiIn;
     auto ports = midiIn.getMidiInPorts();
 
+#ifdef Q_OS_MAC
+
+    ui->comboBoxMidiInPort->addItem("Virtual Port (to Cue TX)", QVariant(0))
+
     for(const auto& port : ports)
-        ui->comboBoxMidiInPort->addItem(port);
+        ui->comboBoxMidiInPort->addItem(port, port);
+
+#else
+
+    if (ports.count() == 0)
+    {
+        ui->comboBoxMidiInPort->setEnabled(false);
+        ui->comboBoxMidiInPort->addItem("No MIDI In Ports available", QVariant(-1));
+    }
+    else
+    {
+        for(const auto& port : ports)
+            ui->comboBoxMidiInPort->addItem(port, port);
+    }
+
+#endif
+
+
 }

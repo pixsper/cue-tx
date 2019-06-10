@@ -31,6 +31,7 @@ protected:
 public:
     virtual bool start(const QVariantMap& configuration) = 0;
     virtual void stop() = 0;
+    virtual QVariantMap defaultSettings() const = 0;
 
 public slots:
     virtual void sendMessage(const MscMessage& message) = 0;

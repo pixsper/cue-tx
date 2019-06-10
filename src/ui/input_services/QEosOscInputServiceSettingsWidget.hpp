@@ -19,26 +19,22 @@
 
 namespace Ui
 {
-    class QMidiMscInputServiceSettingsWidget;
+    class QEosOscInputServiceSettingsWidget;
 }
 
-class QMidiMscInputServiceSettingsWidget : public QSettingsWidget
+class QEosOscInputServiceSettingsWidget : public QSettingsWidget
 {
     Q_OBJECT
 
-    Ui::QMidiMscInputServiceSettingsWidget* ui;
+    Ui::QEosOscInputServiceSettingsWidget* ui;
 
 public:
-    explicit QMidiMscInputServiceSettingsWidget(QWidget* parent = nullptr);
-    ~QMidiMscInputServiceSettingsWidget() override;
-
-    void refresh() override;
+    explicit QEosOscInputServiceSettingsWidget(QWidget* parent = nullptr);
+    ~QEosOscInputServiceSettingsWidget() override;
 
     void setSettings(const QVariantMap& settings) override;
     QVariantMap getSettings() override;
     void setDefaultSettings() override;
 
-private:
-    void updateMidiPortList();
 };
 

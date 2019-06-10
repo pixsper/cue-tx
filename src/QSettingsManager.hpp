@@ -15,30 +15,24 @@
 
 #pragma once
 
-#include "../QSettingsWidget.hpp"
+#include <QObject>
+#include <QSettings>
 
-namespace Ui
-{
-    class QMidiMscInputServiceSettingsWidget;
-}
-
-class QMidiMscInputServiceSettingsWidget : public QSettingsWidget
+class QSettingsManager : public QObject
 {
     Q_OBJECT
 
-    Ui::QMidiMscInputServiceSettingsWidget* ui;
+    QSettings _settings;
 
 public:
-    explicit QMidiMscInputServiceSettingsWidget(QWidget* parent = nullptr);
-    ~QMidiMscInputServiceSettingsWidget() override;
+    explicit QSettingsManager(QObject *parent = nullptr);
 
-    void refresh() override;
+    void saveSettings(const QVariantMap& map);
 
-    void setSettings(const QVariantMap& settings) override;
-    QVariantMap getSettings() override;
-    void setDefaultSettings() override;
+    QVariantMap loadSettings();
 
-private:
-    void updateMidiPortList();
+    void clearSettings();
+
+    bool isSettingsEmpty();
 };
 

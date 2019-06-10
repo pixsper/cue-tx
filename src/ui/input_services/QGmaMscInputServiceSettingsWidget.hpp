@@ -32,6 +32,8 @@ public:
     explicit QGmaMscInputServiceSettingsWidget(QWidget* parent = nullptr);
     ~QGmaMscInputServiceSettingsWidget() override;
 
-    void setDefaults() override;
+    void setSettings(const QVariantMap& settings) override;
+    QVariantMap getSettings() override;
+    void setDefaultSettings() override;
 };
 

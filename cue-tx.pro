@@ -20,21 +20,31 @@ SOURCES += \
         src/MscMessage.cpp \
         src/MscTimecode.cpp \
         src/QMscRouter.cpp \
+        src/QSettingsManager.cpp \
         src/ServiceFactory.cpp \
+        src/input_services/QEosOscInputService.cpp \
         src/input_services/QGmaMscInputService.cpp \
+        src/input_services/QMidiMscInputService.cpp \
+        src/output_services/QDisguiseOscOutputService.cpp \
+        src/output_services/QGmaMscOutputService.cpp \
+        src/output_services/QMidiMscOutputService.cpp \
+        src/output_services/QQLabOscOutputService.cpp \
         src/qrtmidi/QRtMidiIn.cpp \
         src/qrtmidi/QRtMidiOut.cpp \
         src/main.cpp \
         src/ui/QPreferencesWindow.cpp \
         src/ui/SettingsWidgetFactory.cpp \
         src/ui/input_services/QGmaMscInputServiceSettingsWidget.cpp \
-        src/ui/input_services/QMidiMscInputServiceSettingsWidget.cpp
+        src/ui/input_services/QEosOscInputServiceSettingsWidget.cpp \
+        src/ui/input_services/QMidiMscInputServiceSettingsWidget.cpp \
+        src/ui/output_services/QMidiMscOutputServiceSettingsWidget.cpp
 
 HEADERS += \
         src/MscCueId.hpp \
         src/MscMessage.hpp \
         src/MscTimecode.hpp \
         src/QMscRouter.hpp \
+        src/QSettingsManager.hpp \
         src/ServiceFactory.hpp \
         src/ServiceTypes.hpp \
         src/input_services/QCueTxInputService.hpp \
@@ -52,12 +62,16 @@ HEADERS += \
         src/ui/QSettingsWidget.hpp \
         src/ui/SettingsWidgetFactory.hpp \
         src/ui/input_services/QGmaMscInputServiceSettingsWidget.hpp \
-        src/ui/input_services/QMidiMscInputServiceSettingsWidget.hpp
+        src/ui/input_services/QEosOscInputServiceSettingsWidget.hpp \
+        src/ui/input_services/QMidiMscInputServiceSettingsWidget.hpp \
+        src/ui/output_services/QMidiMscOutputServiceSettingsWidget.hpp
 
 FORMS += \
     src/ui/QPreferencesWindow.ui \
     src/ui/input_services/QGmaMscInputServiceSettingsWidget.ui \
-    src/ui/input_services/QMidiMscInputServiceSettingsWidget.ui
+    src/ui/input_services/QEosOscInputServiceSettingsWidget.ui \
+    src/ui/input_services/QMidiMscInputServiceSettingsWidget.ui \
+    src/ui/output_services/QMidiMscOutputServiceSettingsWidget.ui
 
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

@@ -40,14 +40,21 @@ public:
 
     void refreshAndShow();
 
+    void setSettings(const QVariantMap& settings);
+    QVariantMap getSettings();
+
 private:
     void updateVisibility();
     void updateInputSettingsWidget();
     void updateOutputSettingsWidget();
 
 private slots:
-    void on_comboBoxInput_currentIndexChanged();
-    void on_comboBoxOutput_currentIndexChanged();
+    void onComboBoxInputCurrentIndexChanged(int index);
+    void onComboBoxOutputCurrentIndexChanged(int index);
+    void onOkButtonClicked();
+    void onApplyButtonClicked();
+    void onCancelButtonClicked();
 
-    void on_buttonBox_clicked(QAbstractButton* button);
+signals:
+    void settingsChanged(const QVariantMap& settings);
 };

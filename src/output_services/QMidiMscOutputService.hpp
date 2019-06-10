@@ -25,67 +25,30 @@ class QMidiMscOutputService : public QCueTxOutputService
 
     QRtMidiOut* _midiOut;
 
-    const char* SETTINGS_PORT_NAME = "port";
-    const char* SETTINGS_PORT_DEFAULT = "";
-
-    const char* SETTINGS_ISVIRTUAL_NAME = "is_virtual";
-#ifdef Q_OS_MAC
-    const bool SETTINGS_ISVIRTUAL_DEFAULT = true;
-#else
-    const bool SETTINGS_ISVIRTUAL_DEFAULT = false;
-#endif
-
     const char* RTMIDI_PORT_NAME = "Cue TX Output";
 
 
 public:
-    explicit QMidiMscOutputService(QObject *parent = nullptr)
-        : QCueTxOutputService(parent),
-          _midiOut(new QRtMidiOut(this, RtMidi::Api::UNSPECIFIED, "Cue TX MIDI Output Client"))
-    {
-
-    }
-
-    bool start(const QVariantMap& settings) override
-    {
+    static const QString SETTINGS_PORTNAME_KEY;
+    static const QString SETTINGS_PORTNAME_DEFAULT;
+    static const QString SETTINGS_ISVIRTUAL_KEY;
 #ifdef Q_OS_MAC
-        const auto itVPort = settings.find(SETTINGS_ISVIRTUAL_NAME);
-
-        if ((itVPort != settings.end() && itVPort.value().toBool()) || SETTINGS_ISVIRTUAL_DEFAULT)
-        {
-            _midiOut->openVirtualPort(RTMIDI_PORT_NAME);
-            return _midiOut->isPortOpen();
-        }
-
+    static const bool SETTINGS_ISVIRTUAL_DEFAULT = true;
+#else
+    static const bool SETTINGS_ISVIRTUAL_DEFAULT = false;
 #endif
-	    const auto itPort = settings.find(SETTINGS_PORT_NAME);
-        if (itPort != settings.end())
-        {
-	        const auto ports = QRtMidiOut::getMidiOutPorts();
 
-            for(const auto& pair : ports.toStdMap())
-            {
-                if (pair.second == itPort.value().toString())
-                {
-                    _midiOut->openPort(pair.first, RTMIDI_PORT_NAME);
-                    return _midiOut->isPortOpen();
-                }
-            }
-        }
+    static QVariantMap staticDefaultSettings();
 
-        // Just open the first port we can find, if any
-        _midiOut->openPort(0, RTMIDI_PORT_NAME);
-        return _midiOut->isPortOpen();
-    }
 
-    void stop() override
-    {
-        _midiOut->closePort();
-    }
+    explicit QMidiMscOutputService(QObject *parent = nullptr);
+
+    bool start(const QVariantMap& settings) override;
+
+    void stop() override;
+
+    QVariantMap defaultSettings() const override { return staticDefaultSettings(); }
 
 public slots:
-    void sendMessage(const MscMessage& message) override
-    {
-
-    }
+    void sendMessage(const MscMessage& message) override;
 };

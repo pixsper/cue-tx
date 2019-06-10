@@ -17,6 +17,7 @@
 
 #include "QCueTxInputService.hpp"
 #include <QUdpSocket>
+#include <QTcpSocket>
 #include <QNetworkDatagram>
 #include <QDataStream>
 #include <QRegularExpression>
@@ -24,90 +25,56 @@
 
 class QEosOscInputService : public QCueTxInputService
 {
+public:
+    enum class ReceiveMode
+    {
+        TcpPacketLengthHeaders = 0,
+        TcpSlip = 1,
+        Udp = 2
+    };
+
+private:
     Q_OBJECT
 
-    const char* SETTINGS_PORT_KEY = "port";
-    const quint16 SETTINGS_PORT_DEFAULT = 8001;
+    static const quint16 TCP_PORT = 3032;
 
-
+    QTcpSocket* _tcpSocket;
     QUdpSocket* _udpSocket;
+
+    ReceiveMode _mode;
+    quint16 _udpPort;
+
     QRegularExpression _addressRegex;
 
 public:
-    explicit QEosOscInputService(QObject *parent = nullptr)
-        : QCueTxInputService(parent),
-          _udpSocket(new QUdpSocket(this)),
-          _addressRegex(R"(\/eos\/out\/event\/cue\/(\d*\.?\d+)\/(\d*\.?\d+)\/(fire|stop))")
-    {
-        _addressRegex.optimize();
-    }
+    static const QString SETTINGS_MODE_KEY;
+    static const ReceiveMode SETTINGS_MODE_DEFAULT = ReceiveMode::TcpPacketLengthHeaders;
+    static const QString SETTINGS_HOSTUDPPORT_KEY;
+    static const quint16 SETTINGS_HOSTUDPPORT_MIN = 1;
+    static const quint16 SETTINGS_HOSTUDPPORT_MAX = 65535;
+    static const quint16 SETTINGS_HOSTUDPPORT_DEFAULT = 8001;
 
-    bool start(const QVariantMap& settings) override
-    {
-        quint16 port = SETTINGS_PORT_DEFAULT;
 
-        const auto it = settings.find(SETTINGS_PORT_KEY);
+    static QVariantMap staticDefaultSettings();
 
-        if (it != settings.end())
-            port = static_cast<quint16>(it.value().toInt());
 
-        connect(_udpSocket, &QUdpSocket::readyRead, this, &QEosOscInputService::readPendingDatagrams);
-        return _udpSocket->bind(port, QUdpSocket::ShareAddress);
-    }
+    explicit QEosOscInputService(QObject *parent = nullptr);
 
-    void stop() override
-    {
-        _udpSocket->disconnectFromHost();
-       disconnect(_udpSocket, &QUdpSocket::readyRead, this, &QEosOscInputService::readPendingDatagrams);
-    }
+    bool start(const QVariantMap& settings) override;
 
-    void processPacket(const OSCPP::Server::Packet& packet)
-    {
-        const OSCPP::Server::Message message(packet);
+    void stop() override;
 
-        const auto match = _addressRegex.match(message.address());
+    QVariantMap defaultSettings() const override { return staticDefaultSettings(); }
 
-        if (!match.isValid())
-            return;
+private:
+    void handleTcpError(QAbstractSocket::SocketError socketError);
 
-        if (match.capturedTexts()[3] == "fire")
-        {
+    void processDatagram(const QNetworkDatagram& datagram);
 
-        }
-        else if (match.capturedTexts()[3] == "stop")
-        {
-
-        }
-    }
-
-    void processDatagram(const QNetworkDatagram& datagram)
-    {
-	    const OSCPP::Server::Packet packet(datagram.data().data(), static_cast<size_t>(datagram.data().size()));
-
-        if (packet.isBundle())
-        {
-	        const OSCPP::Server::Bundle bundle(packet);
-            OSCPP::Server::PacketStream packets(bundle.packets());
-
-            while (!packets.atEnd())
-                processPacket(packets.next());
-        }
-        else
-        {
-            processPacket(packet);
-        }
-    }
-
+    void processPacket(const OSCPP::Server::Packet& packet);
 
 
 private slots:
-    void readPendingDatagrams()
-    {
-        while (_udpSocket->hasPendingDatagrams())
-        {
-            QNetworkDatagram datagram = _udpSocket->receiveDatagram();
-            processDatagram(datagram);
-        }
-    }
+    void readPendingDatagrams();
 
 };

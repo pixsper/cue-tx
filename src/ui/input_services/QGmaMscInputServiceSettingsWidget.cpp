@@ -23,8 +23,8 @@ QGmaMscInputServiceSettingsWidget::QGmaMscInputServiceSettingsWidget(QWidget *pa
 {
     ui->setupUi(this);
 
-    ui->spinBoxInputUdpPort->setMinimum(QGmaMscInputService::SETTINGS_PORT_MIN);
-    ui->spinBoxInputUdpPort->setMaximum(QGmaMscInputService::SETTINGS_PORT_MAX);
+    ui->spinBoxInputUdpPort->setMinimum(QGmaMscInputService::SETTINGS_HOSTPORT_MIN);
+    ui->spinBoxInputUdpPort->setMaximum(QGmaMscInputService::SETTINGS_HOSTPORT_MAX);
 }
 
 QGmaMscInputServiceSettingsWidget::~QGmaMscInputServiceSettingsWidget()
@@ -32,9 +32,19 @@ QGmaMscInputServiceSettingsWidget::~QGmaMscInputServiceSettingsWidget()
     delete ui;
 }
 
-void QGmaMscInputServiceSettingsWidget::setDefaults()
+void QGmaMscInputServiceSettingsWidget::setSettings(const QVariantMap& settings)
 {
-    ui->spinBoxInputUdpPort->setValue(QGmaMscInputService::SETTINGS_PORT_DEFAULT);
+
+}
+
+QVariantMap QGmaMscInputServiceSettingsWidget::getSettings()
+{
+    return QVariantMap();
+}
+
+void QGmaMscInputServiceSettingsWidget::setDefaultSettings()
+{
+    ui->spinBoxInputUdpPort->setValue(QGmaMscInputService::SETTINGS_HOSTPORT_DEFAULT);
     ui->checkBoxRemoveZeroPadding->setCheckState(
                 QGmaMscInputService::SETTINGS_REMOVEZEROPADDING_DEFAULT ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
 }

@@ -25,16 +25,21 @@ class QMscRouter : public QObject
 {
     Q_OBJECT
 
-    InputServiceType _inputServiceType;
     QCueTxInputService* _inputService;
-
-    OutputServiceType _outputServiceType;
     QCueTxOutputService* _outputService;
 
 public:
+    static const QString SETTINGS_INPUTSERVICETYPE_KEY;
+    static const InputServiceType SETTINGS_INPUTSERVICETYPE_DEFAULT = InputServiceType::MidiMsc;
+    static const QString SETTINGS_OUTPUTSERVICETYPE_KEY;
+    static const OutputServiceType SETTINGS_OUTPUTSERVICETYPE_DEFAULT = OutputServiceType::None;
+    static const QString SETTINGS_INPUTSERVICESETTINGS_KEY;
+    static const QString SETTINGS_OUTPUTSERVICESETTINGS_KEY;
+
     explicit QMscRouter(QObject *parent = nullptr);
 
-    void start(const QVariantMap& inputConfiguration, const QVariantMap& outputConfiguration);
+
+    bool start(const QVariantMap& settings);
 
     void stop();
 };

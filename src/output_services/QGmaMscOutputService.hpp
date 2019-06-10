@@ -23,12 +23,6 @@ class QGmaMscOutputService : public QCueTxOutputService
 {
     Q_OBJECT
 
-    const char* SETTINGS_HOSTIP_NAME = "host_ip";
-    const char* SETTINGS_HOSTIP_DEFAULT = "127.0.0.1";
-
-    const char* SETTINGS_HOSTPORT_NAME = "host_port";
-    const quint16 SETTINGS_HOSTPORT_DEFAULT = 6004;
-
 
     QHostAddress _hostIp;
     quint16 _hostPort;
@@ -37,43 +31,23 @@ class QGmaMscOutputService : public QCueTxOutputService
 
 
 public:
-    explicit QGmaMscOutputService(QObject *parent = nullptr)
-	    : QCueTxOutputService(parent), 
-			_hostPort(SETTINGS_HOSTPORT_DEFAULT),
-			_udpSocket(new QUdpSocket(this))
-    {
-    }
+    static const QString SETTINGS_HOSTIP_KEY;
+    static const QString SETTINGS_HOSTIP_DEFAULT;
 
-    bool start(const QVariantMap& settings) override
-    {
-	    const auto itIp = settings.find(SETTINGS_HOSTIP_NAME);
+    static const QString SETTINGS_HOSTPORT_KEY;
+    static const quint16 SETTINGS_HOSTPORT_DEFAULT = 6004;
 
-        if (itIp != settings.end())
-            _hostIp = QHostAddress(itIp.value().toString());
-        else
-            _hostIp = QHostAddress(SETTINGS_HOSTIP_DEFAULT);
+    static QVariantMap staticDefaultSettings();
 
-	    const auto itPort = settings.find(SETTINGS_HOSTPORT_NAME);
 
-        if (itPort != settings.end())
-            _hostPort = static_cast<quint16>(itPort.value().toInt());
-        else
-            _hostPort = SETTINGS_HOSTPORT_DEFAULT;
+    explicit QGmaMscOutputService(QObject *parent = nullptr);
 
-        return _hostIp.isNull();
-    }
+    bool start(const QVariantMap& settings) override;
 
-    virtual void stop() override
-    {
-        _hostIp.clear();
-    }
+    virtual void stop() override;
+
+    QVariantMap defaultSettings() const override { return staticDefaultSettings(); }
 
 public slots:
-    void sendMessage(const MscMessage& message) override
-    {
-        if (_hostIp.isNull())
-            return;
-
-
-    }
+    void sendMessage(const MscMessage& message) override;
 };
