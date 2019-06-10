@@ -16,7 +16,12 @@
 #include "QGmaMscInputService.hpp"
 
 const QString QGmaMscInputService::SETTINGS_HOSTPORT_KEY = "in_gma_host_port";
+const quint16 QGmaMscInputService::SETTINGS_HOSTPORT_DEFAULT;
+const quint16 QGmaMscInputService::SETTINGS_HOSTPORT_MIN;
+const quint16 QGmaMscInputService::SETTINGS_HOSTPORT_MAX;
 const QString QGmaMscInputService::SETTINGS_REMOVEZEROPADDING_KEY = "in_gma_remove_zero_padding";
+const bool QGmaMscInputService::SETTINGS_REMOVEZEROPADDING_DEFAULT;
+
 
 QVariantMap QGmaMscInputService::staticDefaultSettings()
 {

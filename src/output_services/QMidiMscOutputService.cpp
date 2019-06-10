@@ -18,6 +18,7 @@
 const QString QMidiMscOutputService::SETTINGS_PORTNAME_KEY = "out_midi_port";
 const QString QMidiMscOutputService::SETTINGS_PORTNAME_DEFAULT = "";
 const QString QMidiMscOutputService::SETTINGS_ISVIRTUAL_KEY = "out_midi_is_virtual";
+const bool QMidiMscOutputService::SETTINGS_ISVIRTUAL_DEFAULT;
 
 QVariantMap QMidiMscOutputService::staticDefaultSettings()
 {

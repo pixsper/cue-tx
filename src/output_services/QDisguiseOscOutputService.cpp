@@ -18,6 +18,7 @@
 const QString QDisguiseOscOutputService::SETTINGS_HOSTIP_KEY = "out_disguise_host_ip";
 const QString QDisguiseOscOutputService::SETTINGS_HOSTIP_DEFAULT = "127.0.0.1";
 const QString QDisguiseOscOutputService::SETTINGS_HOSTPORT_KEY = "out_disguise_host_port";
+const quint16 QDisguiseOscOutputService::SETTINGS_HOSTPORT_DEFAULT;
 
 QDisguiseOscOutputService::QDisguiseOscOutputService(QObject* parent)
     : QCueTxOutputService(parent),

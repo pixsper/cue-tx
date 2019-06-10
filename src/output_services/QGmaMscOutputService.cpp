@@ -19,6 +19,7 @@ const QString QGmaMscOutputService::SETTINGS_HOSTIP_KEY = "out_gma_host_ip";
 const QString QGmaMscOutputService::SETTINGS_HOSTIP_DEFAULT = "127.0.0.1";
 
 const QString QGmaMscOutputService::SETTINGS_HOSTPORT_KEY = "out_gma_host_port";
+const quint16 QGmaMscOutputService::SETTINGS_HOSTPORT_DEFAULT;
 
 QVariantMap QGmaMscOutputService::staticDefaultSettings()
 {

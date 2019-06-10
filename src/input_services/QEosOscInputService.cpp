@@ -16,7 +16,11 @@
 #include "QEosOscInputService.hpp"
 
 const QString QEosOscInputService::SETTINGS_MODE_KEY = "in_eos_mode";
+const QEosOscInputService::ReceiveMode QEosOscInputService::SETTINGS_MODE_DEFAULT;
 const QString QEosOscInputService::SETTINGS_HOSTUDPPORT_KEY = "in_eos_host_udp_port";
+const quint16 QEosOscInputService::SETTINGS_HOSTUDPPORT_MIN;
+const quint16 QEosOscInputService::SETTINGS_HOSTUDPPORT_MAX;
+const quint16 QEosOscInputService::SETTINGS_HOSTUDPPORT_DEFAULT;
 
 
 QVariantMap QEosOscInputService::staticDefaultSettings()

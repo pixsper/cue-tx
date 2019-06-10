@@ -60,7 +60,7 @@ void QMidiMscInputServiceSettingsWidget::updateMidiPortList()
 
 #ifdef Q_OS_MAC
 
-    ui->comboBoxMidiInPort->addItem("Virtual Port (to Cue TX)", QVariant(0))
+    ui->comboBoxMidiInPort->addItem("Virtual Port (to Cue TX)", QVariant(0));
 
     for(const auto& port : ports)
         ui->comboBoxMidiInPort->addItem(port, port);
