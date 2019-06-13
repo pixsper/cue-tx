@@ -64,19 +64,19 @@ void QDisguiseOscOutputService::sendMessage(const MscMessage& message)
     {
         case MscCommandType::Go:
 
-            if (message._cueNumber == "")
+            if (message._cueNumber.has_value())
             {
-                packet.openMessage("/d3/showcontrol/nextsection", 0).closeMessage();
+                packet.openMessage("/d3/showcontrol/cue", 1)
+                        .string(message._cueNumber.value().toString().toStdString().c_str()).closeMessage();
             }
             else
             {
-                packet.openMessage("/d3/showcontrol/cue", 1)
-                        .string(message._cueNumber.toString().toStdString().c_str()).closeMessage();
+                packet.openMessage("/d3/showcontrol/nextsection", 0).closeMessage();
             }
             break;
 
         case MscCommandType::Stop:
-            if (message._cueNumber != "")
+            if (!message._cueNumber.has_value())
                 packet.openMessage("/d3/showcontrol/stop", 0).closeMessage();
             break;
 
@@ -85,8 +85,11 @@ void QDisguiseOscOutputService::sendMessage(const MscMessage& message)
             break;
 
         case MscCommandType::OpenCueList:
-            packet.openMessage("d3/showcontrol/trackid", 1)
-                    .string(message._cueList.toString().toStdString().c_str()).closeMessage();
+            if (message._cueList.has_value())
+            {
+                packet.openMessage("d3/showcontrol/trackid", 1)
+                        .string(message._cueList.value().toString().toStdString().c_str()).closeMessage();
+            }
             break;
 
         default:

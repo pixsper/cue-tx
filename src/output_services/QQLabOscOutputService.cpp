@@ -73,59 +73,59 @@ void QQLabOscOutputService::sendMessage(const MscMessage& message)
             break;
 
         case MscCommandType::Reset:
-            if (message._cueNumber == "")
+            if (message._cueNumber.has_value())
             {
-                packet.openMessage("/reset", 0).closeMessage();
+                packet.openMessage("/reset", 1)
+                        .string(reinterpret_cast<const char*>(message._cueNumber.value().toString().toStdString().c_str())).closeMessage();
             }
             else
             {
-                packet.openMessage("/reset", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.toString().toStdString().c_str())).closeMessage();
+                packet.openMessage("/reset", 0).closeMessage();
             }
             break;
 
         case MscCommandType::Go:
 
-            if (message._cueNumber == "")
+            if (message._cueNumber.has_value())
             {
-                packet.openMessage("/go", 0);
+                packet.openMessage("/go", 1)
+                        .string(reinterpret_cast<const char*>(message._cueNumber.value().toString().toStdString().c_str())).closeMessage();
             }
             else
             {
-                packet.openMessage("/go", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.toString().toStdString().c_str())).closeMessage();
+                packet.openMessage("/go", 0);
             }
             break;
 
         case MscCommandType::Stop:
-            if (message._cueNumber == "")
+            if (message._cueNumber.has_value())
             {
-                packet.openMessage("/pause", 0);
+                packet.openMessage("/pause", 1)
+                        .string(reinterpret_cast<const char*>(message._cueNumber.value().toString().toStdString().c_str())).closeMessage();
             }
             else
             {
-                packet.openMessage("/pause", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.toString().toStdString().c_str())).closeMessage();
+                packet.openMessage("/pause", 0);
             }
             break;
 
         case MscCommandType::Resume:
-            if (message._cueNumber == "")
+            if (message._cueNumber.has_value())
             {
-                packet.openMessage("/resume", 0);
+                packet.openMessage("/resume", 1)
+                        .string(reinterpret_cast<const char*>(message._cueNumber.value().toString().toStdString().c_str())).closeMessage();
             }
             else
             {
-                packet.openMessage("/resume", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.toString().toStdString().c_str())).closeMessage();
+                packet.openMessage("/resume", 0);
             }
             break;
 
         case MscCommandType::Load:
-            if (message._cueNumber != "")
+            if (message._cueNumber.has_value())
             {
                 packet.openMessage("/load", 1)
-                        .string(reinterpret_cast<const char*>(message._cueNumber.toString().toStdString().c_str())).closeMessage();
+                        .string(reinterpret_cast<const char*>(message._cueNumber.value().toString().toStdString().c_str())).closeMessage();
             }
             break;
 

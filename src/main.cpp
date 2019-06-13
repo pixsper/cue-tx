@@ -18,9 +18,10 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 #include <QMessageBox>
+#include <QLoggingCategory>
 
 #include "ui/QPreferencesWindow.hpp"
-#include "QMscRouter.hpp"
+#include "QCueRouter.hpp"
 #include "QSettingsManager.hpp"
 
 #ifdef Q_OS_MAC
@@ -62,7 +63,7 @@ int main(int argc, char* argv[])
 
 
     QSettingsManager settingsManager;
-    QMscRouter router;
+    QCueRouter router;
 
     if (parser.isSet(cleanStartOption))
         settingsManager.clearSettings();

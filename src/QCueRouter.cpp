@@ -13,14 +13,14 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CueTX.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "QMscRouter.hpp"
+#include "QCueRouter.hpp"
 
-const QString QMscRouter::SETTINGS_INPUTSERVICETYPE_KEY = "inputServiceType";
-const QString QMscRouter::SETTINGS_OUTPUTSERVICETYPE_KEY = "outputServiceType";
-const QString QMscRouter::SETTINGS_INPUTSERVICESETTINGS_KEY = "inputServiceSettings";
-const QString QMscRouter::SETTINGS_OUTPUTSERVICESETTINGS_KEY = "outputServiceSettings";
+const QString QCueRouter::SETTINGS_INPUTSERVICETYPE_KEY = "inputServiceType";
+const QString QCueRouter::SETTINGS_OUTPUTSERVICETYPE_KEY = "outputServiceType";
+const QString QCueRouter::SETTINGS_INPUTSERVICESETTINGS_KEY = "inputServiceSettings";
+const QString QCueRouter::SETTINGS_OUTPUTSERVICESETTINGS_KEY = "outputServiceSettings";
 
-QMscRouter::QMscRouter(QObject* parent)
+QCueRouter::QCueRouter(QObject* parent)
     : QObject(parent),
       _inputService(nullptr),
       _outputService(nullptr)
@@ -28,7 +28,7 @@ QMscRouter::QMscRouter(QObject* parent)
 
 }
 
-bool QMscRouter::start(const QVariantMap& settings)
+bool QCueRouter::start(const QVariantMap& settings)
 {
     InputServiceType inputServiceType = static_cast<InputServiceType>(
                 settings.value(SETTINGS_INPUTSERVICETYPE_KEY, QVariant(static_cast<int>(SETTINGS_INPUTSERVICETYPE_DEFAULT))).toInt());
@@ -59,7 +59,7 @@ bool QMscRouter::start(const QVariantMap& settings)
     return true;
 }
 
-void QMscRouter::stop()
+void QCueRouter::stop()
 {
     if (_inputService != nullptr && _outputService != nullptr)
         disconnect(_inputService, &QCueTxInputService::messageReceived, _outputService, &QCueTxOutputService::sendMessage);

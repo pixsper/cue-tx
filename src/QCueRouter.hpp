@@ -21,7 +21,7 @@
 #include "input_services/QCueTxInputService.hpp"
 #include "output_services/QCueTxOutputService.hpp"
 
-class QMscRouter : public QObject
+class QCueRouter : public QObject
 {
     Q_OBJECT
 
@@ -36,7 +36,7 @@ public:
     static const QString SETTINGS_INPUTSERVICESETTINGS_KEY;
     static const QString SETTINGS_OUTPUTSERVICESETTINGS_KEY;
 
-    explicit QMscRouter(QObject *parent = nullptr);
+    explicit QCueRouter(QObject *parent = nullptr);
 
 
     bool start(const QVariantMap& settings);

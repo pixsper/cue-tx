@@ -17,6 +17,7 @@
 
 #include <QtGlobal>
 #include <QByteArray>
+#include <optional>
 #include "MscCueId.hpp"
 #include "MscTimecode.hpp"
 
@@ -131,30 +132,28 @@ struct MscMessage
 
     static const quint8 MACRONUMBER_MAX = 127;
 
+    static const int MSC_MESSAGE_MAX_LENGTH = 128;
+
     int _deviceId;
     MscCommandType _commandType;
     MscCommandFormat _commandFormat;
 
-    MscTimecode _timecode;
+    std::optional<MscTimecode> _timecode;
 
-    MscCueId _cueNumber;
-    MscCueId _cueList;
-    MscCueId _cuePath;
+    std::optional<MscCueId> _cueNumber;
+    std::optional<MscCueId> _cueList;
+    std::optional<MscCueId> _cuePath;
 
-    int _controlNumber;
-    int _controlValue;
+    std::optional<int> _controlNumber;
+    std::optional<int> _controlValue;
 
-    int _macroNumber;
+    std::optional<int> _macroNumber;
 
-public:
     static bool FromByteArray(const QByteArray& array, MscMessage& message);
 
     MscMessage();
 
-    QByteArray ToByteArray()
-    {
-        return QByteArray();
-    }
+    bool ToByteArray(QByteArray& array);
 };
 
 

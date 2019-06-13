@@ -13,13 +13,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 QMAKE_INFO_PLIST = $$PWD/build/Info.plist
 
 
-CONFIG += c++14
+CONFIG += c++17
 
 SOURCES += \
         src/MscCueId.cpp \
         src/MscMessage.cpp \
         src/MscTimecode.cpp \
-        src/QMscRouter.cpp \
+        src/QCueLogger.cpp \
+        src/QCueRouter.cpp \
         src/QSettingsManager.cpp \
         src/ServiceFactory.cpp \
         src/input_services/QEosOscInputService.cpp \
@@ -43,7 +44,8 @@ HEADERS += \
         src/MscCueId.hpp \
         src/MscMessage.hpp \
         src/MscTimecode.hpp \
-        src/QMscRouter.hpp \
+        src/QCueLogger.hpp \
+        src/QCueRouter.hpp \
         src/QSettingsManager.hpp \
         src/ServiceFactory.hpp \
         src/ServiceTypes.hpp \
