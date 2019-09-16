@@ -23,6 +23,9 @@ class QGmaMscOutputService : public QCueTxOutputService
 {
     Q_OBJECT
 
+    const int MSC_GMA_HEADER_LENGTH = 12;
+    const char* MSC_GMAHEADER_ID1 = "GMA";
+    const char* MSC_GMAHEADER_ID2 = "MSC";
 
     QHostAddress _hostIp;
     quint16 _hostPort;

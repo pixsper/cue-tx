@@ -34,6 +34,8 @@ class QPreferencesWindow : public QMainWindow
 
     Ui::QPreferencesWindow* ui;
 
+    bool _isDirty = false;
+
 public:
     explicit QPreferencesWindow(QWidget *parent = nullptr);
     ~QPreferencesWindow();
@@ -47,6 +49,8 @@ private:
     void updateVisibility();
     void updateInputSettingsWidget();
     void updateOutputSettingsWidget();
+
+    void setDirty(bool isDirty);
 
 private slots:
     void onComboBoxInputCurrentIndexChanged(int index);

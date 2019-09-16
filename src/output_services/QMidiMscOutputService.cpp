@@ -75,5 +75,7 @@ void QMidiMscOutputService::stop()
 
 void QMidiMscOutputService::sendMessage(const MscMessage& message)
 {
-
+    QByteArray array;
+    if (message.toByteArray(array))
+        _midiOut->sendMessage(array);
 }

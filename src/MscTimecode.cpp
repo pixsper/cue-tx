@@ -158,7 +158,7 @@ QDataStream& operator>>(QDataStream& stream, MscTimecode& timecode)
 	return stream;
 }
 
-QDataStream& operator<<(QDataStream& stream, MscTimecode& timecode)
+QDataStream& operator<<(QDataStream& stream, const MscTimecode& timecode)
 {
 	const QByteArray data = timecode.ToByteArray();
 	stream.writeBytes(data, static_cast<uint>(data.length()));

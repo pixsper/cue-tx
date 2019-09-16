@@ -90,7 +90,10 @@ int main(int argc, char* argv[])
     QSystemTrayIcon tray(icon);
 
 	auto trayMenu = new QMenu();
-    trayMenu->addAction("&Preferences...", [&]() { preferencesWindow.refreshAndShow(); });
+    trayMenu->addAction("&Preferences...", [&]() {
+        preferencesWindow.setSettings(settingsManager.loadSettings());
+        preferencesWindow.refreshAndShow();
+    });
 	trayMenu->addSeparator();
 	trayMenu->addAction("&About CueTX", [&]()
 	{
@@ -102,10 +105,10 @@ int main(int argc, char* argv[])
 	tray.show();
 	tray.setContextMenu(trayMenu);
 
+    router.start(settingsManager.loadSettings());
 
     if (settingsManager.isSettingsEmpty())
         preferencesWindow.refreshAndShow();
-
 
 	return QApplication::exec();
 }

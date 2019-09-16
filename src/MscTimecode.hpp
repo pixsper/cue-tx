@@ -64,5 +64,5 @@ public:
 };
 
 QDataStream& operator>>(QDataStream& stream, MscTimecode& timecode);
-QDataStream& operator<<(QDataStream& stream, MscTimecode& timecode);
+QDataStream& operator<<(QDataStream& stream, const MscTimecode& timecode);
 

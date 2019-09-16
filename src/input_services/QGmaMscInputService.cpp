@@ -34,22 +34,29 @@ QVariantMap QGmaMscInputService::staticDefaultSettings()
 
 QGmaMscInputService::QGmaMscInputService(QObject* parent)
     : QCueTxInputService(parent),
-      _udpSocket(new QUdpSocket(this))
+      _udpSocket(new QUdpSocket(this)),
+      _udpPort(SETTINGS_HOSTPORT_DEFAULT),
+      _isRemoveZeroPadding(SETTINGS_REMOVEZEROPADDING_DEFAULT)
 {
 
 }
 
 bool QGmaMscInputService::start(const QVariantMap& settings)
 {
-    quint16 port = SETTINGS_HOSTPORT_DEFAULT;
+    const auto itPort = settings.find(SETTINGS_HOSTPORT_KEY);
+    if (itPort != settings.end())
+        _udpPort = static_cast<quint16>(itPort.value().toInt());
+    else
+        _udpPort = SETTINGS_HOSTPORT_DEFAULT;
 
-    const auto it = settings.find(SETTINGS_HOSTPORT_KEY);
-
-    if (it != settings.end())
-        port = static_cast<quint16>(it.value().toInt());
+    const auto itPadding = settings.find(SETTINGS_REMOVEZEROPADDING_KEY);
+    if (itPadding != settings.end())
+        _isRemoveZeroPadding = itPadding.value().toBool();
+    else
+        _isRemoveZeroPadding = SETTINGS_REMOVEZEROPADDING_DEFAULT;
 
     connect(_udpSocket, &QIODevice::readyRead, this, &QGmaMscInputService::readPendingDatagrams);
-    return _udpSocket->bind(port, QAbstractSocket::ShareAddress);
+    return _udpSocket->bind(_udpPort, QAbstractSocket::ShareAddress);
 }
 
 void QGmaMscInputService::stop()
@@ -90,8 +97,13 @@ void QGmaMscInputService::processDatagram(const QNetworkDatagram& datagram)
     mscData.remove(0, MSC_GMA_HEADER_LENGTH);
 
     MscMessage message;
-    if (MscMessage::FromByteArray(mscData, message))
+    if (MscMessage::fromByteArray(mscData, message))
+    {
+        if (_isRemoveZeroPadding)
+            message.removeZeroPadding();
+
         emit messageReceived(message);
+    }
 }
 
 void QGmaMscInputService::readPendingDatagrams()

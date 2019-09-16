@@ -14,6 +14,7 @@
 // License along with CueTX.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "MscCueId.hpp"
+#include "MscMessage.hpp"
 
 const QRegularExpression MscCueId::VALID_CUEID(R"(^\d+(?:\.\d+)*$)");
 
@@ -32,15 +33,10 @@ MscCueId::MscCueId(const QString& cueString)
 
 }
 
-MscCueId::MscCueId(const char* cuePart...)
+MscCueId::MscCueId(std::initializer_list<const char*> cueParts)
 {
-    va_list args;
-    va_start(args, cuePart);
-
-    while (const char* v = va_arg(args, const char*))
-        _cueParts.append(v);
-
-    va_end(args);
+    for (const char* p : cueParts)
+        _cueParts.append(p);
 }
 
 bool MscCueId::operator==(const MscCueId& rhs) const
@@ -84,17 +80,38 @@ QString MscCueId::toString() const
     return _cueParts.join(".");
 }
 
+void MscCueId::removeZeroPadding()
+{
+    if (_cueParts.size() == 2)
+    {
+        while(_cueParts[1].size() > 0 && _cueParts[1].back() == '0')
+            _cueParts[1].chop(1);
+
+        if (_cueParts[1].isEmpty())
+            _cueParts.removeLast();
+    }
+}
+
 QDataStream& operator>>(QDataStream& stream, MscCueId& cueId)
 {
-    char* cueIdRaw;
-    stream >> cueIdRaw;
-    cueId = cueIdRaw;
-    delete [] cueIdRaw;
+    QString s;
+    quint8 b;
+    stream >> b;
+
+    while(b != 0 && b != MscMessage::SYSEX_END)
+    {
+        s.append(b);
+        stream >> b;
+    }
+
+    cueId = s;
 
     return stream;
 }
 
-QDataStream& operator<<(QDataStream& stream, MscCueId& cueId)
+QDataStream& operator<<(QDataStream& stream, const MscCueId& cueId)
 {
-    return stream << cueId.toString();
+    std::string s = cueId.toString().toStdString();
+    stream.writeBytes(s.data(), (uint)s.length());
+    return stream;
 }

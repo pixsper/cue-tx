@@ -94,7 +94,8 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/third-party/rtmidi/lib/
 else:macx: LIBS += -L$$PWD/third-party/rtmidi/lib/ -lrtmidi
 
 INCLUDEPATH += $$PWD/third-party/rtmidi/include \
-               $$PWD/third-party/oscpp/include
+               $$PWD/third-party/oscpp/include \
+               $$PWD/third-party/optional-lite/include
 
 DEPENDPATH += $$PWD/third-party/rtmidi/include \
               $$PWD/third-party/oscpp/include
@@ -105,3 +106,5 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/th
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/rtmidid.lib
 else:macx: PRE_TARGETDEPS += $$PWD/third-party/rtmidi/lib/librtmidi.a
 
+macx: DEFINES += "optional_CONFIG_SELECT_OPTIONAL=optional_OPTIONAL_NONSTD"
+else: DEFINES += "optional_CONFIG_SELECT_OPTIONAL=optional_OPTIONAL_DEFAULT"

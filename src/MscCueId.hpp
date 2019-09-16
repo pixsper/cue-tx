@@ -29,7 +29,7 @@ public:
 
     MscCueId();
     MscCueId(const QString& cueString);
-    MscCueId(const char* cuePart...);
+    MscCueId(std::initializer_list<const char*> cueParts);
 
     bool operator==(const MscCueId& rhs) const;
     bool operator!=(const MscCueId& rhs) const;
@@ -37,7 +37,9 @@ public:
     bool isValid() const;
 
     QString toString() const;
+
+    void removeZeroPadding();
 };
 
 QDataStream& operator>>(QDataStream& stream, MscCueId& cueId);
-QDataStream& operator<<(QDataStream& stream, MscCueId& cueId);
+QDataStream& operator<<(QDataStream& stream, const MscCueId& cueId);

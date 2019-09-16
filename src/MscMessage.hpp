@@ -17,7 +17,9 @@
 
 #include <QtGlobal>
 #include <QByteArray>
-#include <optional>
+
+#include "nonstd/optional.hpp"
+
 #include "MscCueId.hpp"
 #include "MscTimecode.hpp"
 
@@ -138,22 +140,24 @@ struct MscMessage
     MscCommandType _commandType;
     MscCommandFormat _commandFormat;
 
-    std::optional<MscTimecode> _timecode;
+    nonstd::optional<MscTimecode> _timecode;
 
-    std::optional<MscCueId> _cueNumber;
-    std::optional<MscCueId> _cueList;
-    std::optional<MscCueId> _cuePath;
+    nonstd::optional<MscCueId> _cueNumber;
+    nonstd::optional<MscCueId> _cueList;
+    nonstd::optional<MscCueId> _cuePath;
 
-    std::optional<int> _controlNumber;
-    std::optional<int> _controlValue;
+    nonstd::optional<int> _controlNumber;
+    nonstd::optional<int> _controlValue;
 
-    std::optional<int> _macroNumber;
+    nonstd::optional<int> _macroNumber;
 
-    static bool FromByteArray(const QByteArray& array, MscMessage& message);
+    static bool fromByteArray(const QByteArray& array, MscMessage& message);
 
     MscMessage();
 
-    bool ToByteArray(QByteArray& array);
+    bool toByteArray(QByteArray& array) const;
+
+    void removeZeroPadding();
 };
 
 

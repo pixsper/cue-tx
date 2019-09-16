@@ -81,6 +81,6 @@ void QMidiMscInputService::stop()
 void QMidiMscInputService::processMessage(double timestamp, const QByteArray& message)
 {
     MscMessage mscMessage;
-    if (MscMessage::FromByteArray(message, mscMessage))
+    if (MscMessage::fromByteArray(message, mscMessage))
         emit messageReceived(mscMessage);
 }

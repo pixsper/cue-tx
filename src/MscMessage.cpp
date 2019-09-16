@@ -16,7 +16,9 @@
 #include "MscMessage.hpp"
 #include <QBuffer>
 
-bool MscMessage::FromByteArray(const QByteArray& array, MscMessage& message)
+const quint8 MscMessage::MACRONUMBER_MAX;
+
+bool MscMessage::fromByteArray(const QByteArray& array, MscMessage& message)
 {
     QDataStream data(array);
 
@@ -53,15 +55,15 @@ bool MscMessage::FromByteArray(const QByteArray& array, MscMessage& message)
     quint8 commandType;
     data >> commandType;
 
-    std::optional<MscTimecode> timecode;
+    nonstd::optional<MscTimecode> timecode;
 
-    std::optional<MscCueId> cueNumber;
-    std::optional<MscCueId> cueList;
-    std::optional<MscCueId> cuePath;
+    nonstd::optional<MscCueId> cueNumber;
+    nonstd::optional<MscCueId> cueList;
+    nonstd::optional<MscCueId> cuePath;
 
-    std::optional<int> controlNumber = -1;
-    std::optional<int> controlValue = -1;
-    std::optional<int> macroNumber = -1;
+    nonstd::optional<int> controlNumber = -1;
+    nonstd::optional<int> controlValue = -1;
+    nonstd::optional<int> macroNumber = -1;
 
     char peek;
 
@@ -249,32 +251,25 @@ bool MscMessage::FromByteArray(const QByteArray& array, MscMessage& message)
 
 MscMessage::MscMessage()
     : _deviceId(0),
-      _commandType(MscCommandType::Go),
-    _commandFormat(MscCommandFormat::AllTypes),
-    _timecode(),
-    _cueNumber(),
-    _cueList(),
-    _cuePath(),
-    _controlNumber(-1),
-    _controlValue(-1),
-    _macroNumber(-1)
+      _commandType(MscCommandType::None),
+    _commandFormat(MscCommandFormat::None)
 {
 
 }
 
 
-bool MscMessage::ToByteArray(QByteArray& array)
+bool MscMessage::toByteArray(QByteArray& array) const
 {
     array.reserve(MSC_MESSAGE_MAX_LENGTH);
 
-    QDataStream data(array);
+    QDataStream stream(array);
 
-    data << SYSEX_START;
-    data << SYSEX_REALTIME_ID;
-    data << static_cast<quint8>(_deviceId);
-    data << MSC_SUBID;
-    data << static_cast<quint8>(_commandFormat);
-    data << static_cast<quint8>(_commandType);
+    stream << SYSEX_START;
+    stream << SYSEX_REALTIME_ID;
+    stream << static_cast<quint8>(_deviceId);
+    stream << MSC_SUBID;
+    stream << static_cast<quint8>(_commandFormat);
+    stream << static_cast<quint8>(_commandType);
 
     switch(static_cast<MscCommandType>(_commandType))
     {
@@ -287,15 +282,17 @@ bool MscMessage::ToByteArray(QByteArray& array)
 
             if (_cueNumber.has_value())
             {
-                data << _cueNumber.value();
+                stream << _cueNumber.value();
 
                 if (_cueList.has_value())
                 {
-                    data << _cueList.value();
+                    stream << static_cast<quint8>(0);
+                    stream << _cueList.value();
 
                     if (_cuePath.has_value())
                     {
-                        data << _cuePath.value();
+                        stream << static_cast<quint8>(0);
+                        stream << _cuePath.value();
                     }
                 }
             }
@@ -307,19 +304,21 @@ bool MscMessage::ToByteArray(QByteArray& array)
             if (!_timecode.has_value())
                 return false;
 
-            data << _timecode.value();
+            stream << _timecode.value();
 
             if (_cueNumber.has_value())
             {
-                data << _cueNumber.value();
+                stream << _cueNumber.value();
 
                 if (_cueList.has_value())
                 {
-                    data << _cueList.value();
+                    stream << static_cast<quint8>(0);
+                    stream << _cueList.value();
 
                     if (_cuePath.has_value())
                     {
-                        data << _cuePath.value();
+                        stream << static_cast<quint8>(0);
+                        stream << _cuePath.value();
                     }
                 }
             }
@@ -331,10 +330,10 @@ bool MscMessage::ToByteArray(QByteArray& array)
             if (!(_controlNumber.has_value() && _controlValue.has_value()))
                 return false;
 
-            data << static_cast<quint8>(_controlNumber.value() >> 7);
-            data << static_cast<quint8>(_controlNumber.value() & 0x7F);
-            data << static_cast<quint8>(_controlValue.value() >> 7);
-            data << static_cast<quint8>(_controlValue.value() & 0x7F);
+            stream << static_cast<quint8>(_controlNumber.value() & 0x7F);
+            stream << static_cast<quint8>(_controlNumber.value() >> 7);
+            stream << static_cast<quint8>(_controlValue.value() & 0x7F);
+            stream << static_cast<quint8>(_controlValue.value() >> 7);
 
             break;
 
@@ -343,7 +342,7 @@ bool MscMessage::ToByteArray(QByteArray& array)
             if (!_macroNumber.has_value())
                 return false;
 
-            data << static_cast<quint8>(_macroNumber.value());
+            stream << static_cast<quint8>(_macroNumber.value());
 
 
             break;
@@ -359,7 +358,7 @@ bool MscMessage::ToByteArray(QByteArray& array)
         case MscCommandType::MtcChaseOff:
 
             if (_cueList.has_value())
-                data << _cueList.value();
+                stream << _cueList.value();
 
             break;
 
@@ -368,10 +367,8 @@ bool MscMessage::ToByteArray(QByteArray& array)
             if (!_timecode.has_value())
                 return false;
 
-            data << _timecode.value();
-
-            if (_cueList.has_value())
-                data << _cueList.value();
+            if (!_cueList.has_value())
+                stream << _cueList.value();
 
             break;
 
@@ -381,7 +378,7 @@ bool MscMessage::ToByteArray(QByteArray& array)
             if (!_cueList.has_value())
                 return false;
 
-            data << _cueList.value();
+            stream << _cueList.value();
 
 
             break;
@@ -392,7 +389,7 @@ bool MscMessage::ToByteArray(QByteArray& array)
             if (!_cuePath.has_value())
                 return false;
 
-            data << _cuePath.value();
+            stream << _cuePath.value();
 
 
             break;
@@ -403,10 +400,22 @@ bool MscMessage::ToByteArray(QByteArray& array)
             break;
 
         default:
-            break;
+            return false;
     }
 
-    data << SYSEX_END;
+    stream << SYSEX_END;
 
     return true;
+}
+
+void MscMessage::removeZeroPadding()
+{
+    if (_cueNumber.has_value())
+        _cueNumber.value().removeZeroPadding();
+
+    if (_cueList.has_value())
+        _cueList.value().removeZeroPadding();
+
+    if (_cuePath.has_value())
+        _cuePath.value().removeZeroPadding();
 }

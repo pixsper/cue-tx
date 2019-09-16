@@ -80,7 +80,7 @@ void QPreferencesWindow::refreshAndShow()
 
 void QPreferencesWindow::setSettings(const QVariantMap& settings)
 {
-
+     setDirty(false);
 }
 
 QVariantMap QPreferencesWindow::getSettings()
@@ -126,8 +126,15 @@ void QPreferencesWindow::updateOutputSettingsWidget()
         ui->groupBoxOutputSettings->layout()->addWidget(outputSettingsWidget);
 }
 
+void QPreferencesWindow::setDirty(bool isDirty)
+{
+    _isDirty = isDirty;
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(_isDirty);
+}
+
 void QPreferencesWindow::onComboBoxInputCurrentIndexChanged(int index)
 {
+     _isDirty = true;
     updateInputSettingsWidget();
     updateVisibility();
 }
@@ -141,15 +148,18 @@ void QPreferencesWindow::onComboBoxOutputCurrentIndexChanged(int index)
 void QPreferencesWindow::onOkButtonClicked()
 {
     emit settingsChanged(getSettings());
+    setDirty(false);
     close();
 }
 
 void QPreferencesWindow::onApplyButtonClicked()
 {
     emit settingsChanged(getSettings());
+    setDirty(false);
 }
 
 void QPreferencesWindow::onCancelButtonClicked()
 {
     close();
+    setDirty(false);
 }
