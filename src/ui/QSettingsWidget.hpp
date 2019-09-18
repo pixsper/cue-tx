@@ -22,7 +22,6 @@ public:
     virtual void setDefaultSettings() = 0;
 
 signals:
-
-public slots:
+    void settingsChanged(const QVariantMap& settings);
 };
 

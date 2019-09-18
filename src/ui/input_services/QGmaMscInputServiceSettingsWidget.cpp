@@ -25,6 +25,12 @@ QGmaMscInputServiceSettingsWidget::QGmaMscInputServiceSettingsWidget(QWidget *pa
 
     ui->spinBoxInputUdpPort->setMinimum(QGmaMscInputService::SETTINGS_HOSTPORT_MIN);
     ui->spinBoxInputUdpPort->setMaximum(QGmaMscInputService::SETTINGS_HOSTPORT_MAX);
+
+    connect(ui->spinBoxInputUdpPort, qOverload<int>(&QSpinBox::valueChanged),
+            [&](int) { settingsChanged(getSettings()); });
+
+    connect(ui->checkBoxRemoveZeroPadding, &QCheckBox::stateChanged,
+            [&](int) { settingsChanged(getSettings()); });
 }
 
 QGmaMscInputServiceSettingsWidget::~QGmaMscInputServiceSettingsWidget()
@@ -34,12 +40,26 @@ QGmaMscInputServiceSettingsWidget::~QGmaMscInputServiceSettingsWidget()
 
 void QGmaMscInputServiceSettingsWidget::setSettings(const QVariantMap& settings)
 {
+    {
+        const auto it = settings.find(QGmaMscInputService::SETTINGS_HOSTPORT_KEY);
+        if (it != settings.end())
+            ui->spinBoxInputUdpPort->setValue(it.value().toInt());
+    }
 
+    {
+        const auto it = settings.find(QGmaMscInputService::SETTINGS_REMOVEZEROPADDING_KEY);
+        if (it != settings.end())
+            ui->checkBoxRemoveZeroPadding->setCheckState(it.value().toBool() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+    }
 }
 
 QVariantMap QGmaMscInputServiceSettingsWidget::getSettings()
 {
-    return QVariantMap();
+    return QVariantMap
+    {
+        { QGmaMscInputService::SETTINGS_HOSTPORT_KEY, ui->spinBoxInputUdpPort->value() },
+        { QGmaMscInputService::SETTINGS_REMOVEZEROPADDING_KEY, ui->checkBoxRemoveZeroPadding->checkState() == Qt::CheckState::Checked }
+    };
 }
 
 void QGmaMscInputServiceSettingsWidget::setDefaultSettings()

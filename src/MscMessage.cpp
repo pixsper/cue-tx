@@ -15,8 +15,40 @@
 
 #include "MscMessage.hpp"
 #include <QBuffer>
+#include "oscpp/client.hpp"
 
 const quint8 MscMessage::MACRONUMBER_MAX;
+
+const QMap<MscCommandType, QString> MscMessage::COMMAND_OSC_LABELS
+{
+    { MscCommandType::None, "none" },
+    { MscCommandType::Go, "go" },
+    { MscCommandType::Stop, "stop" },
+    { MscCommandType::Resume, "resume" },
+    { MscCommandType::TimedGo, "timedgo" },
+    { MscCommandType::Load, "load" },
+    { MscCommandType::Set, "set" },
+    { MscCommandType::Fire, "fire" },
+    { MscCommandType::AllOff, "alloff" },
+    { MscCommandType::Restore, "restore" },
+    { MscCommandType::Reset, "reset" },
+    { MscCommandType::GoOff, "gooff" },
+    { MscCommandType::GoJamClock, "gojamclock" },
+    { MscCommandType::StandbyPlus, "standbyplus" },
+    { MscCommandType::StandbyMinus, "standbyminus" },
+    { MscCommandType::SequencePlus, "sequenceplus" },
+    { MscCommandType::SequenceMinus, "sequenceminus" },
+    { MscCommandType::StartClock, "startclock" },
+    { MscCommandType::StopClock, "stopclock" },
+    { MscCommandType::ZeroClock, "zeroclock" },
+    { MscCommandType::SetClock, "setclock" },
+    { MscCommandType::MtcChaseOn, "mtcchaseon" },
+    { MscCommandType::MtcChaseOff, "mtcchaseoff" },
+    { MscCommandType::OpenCueList, "opencuelist" },
+    { MscCommandType::CloseCueList, "closecuelist" },
+    { MscCommandType::OpenCuePath, "opencuepath" },
+    { MscCommandType::CloseCuePath, "closecuepath" }
+};
 
 bool MscMessage::fromByteArray(const QByteArray& array, MscMessage& message)
 {
@@ -405,6 +437,237 @@ bool MscMessage::toByteArray(QByteArray& array) const
 
     stream << SYSEX_END;
 
+    return true;
+}
+
+bool MscMessage::toOscPacket(QByteArray& array) const
+{
+    QByteArray buffer(512, 0);
+    OSCPP::Client::Packet packet(buffer.data(), static_cast<size_t>(buffer.size()));
+
+    std::string address = QString("msc/format/%1/device/%2/%3")
+                      .arg(QString::number(static_cast<quint8>(_commandFormat)),
+                           QString::number(_deviceId),
+                           COMMAND_OSC_LABELS[_commandType]).toStdString();
+
+    size_t tag_count = 0;
+
+    switch (_commandType)
+    {
+        case MscCommandType::Go:
+        case MscCommandType::Stop:
+        case MscCommandType::Resume:
+        case MscCommandType::Load:
+        case MscCommandType::GoOff:
+        case MscCommandType::GoJamClock:
+
+            if (_cueNumber.has_value())
+            {
+                tag_count++;
+                if (_cueList.has_value())
+                {
+                    tag_count++;
+                    if (_cuePath.has_value())
+                        tag_count++;
+                }
+            }
+
+            switch(tag_count)
+            {
+                case 0:
+                    packet.openMessage(address.c_str(), tag_count).closeMessage();
+                    break;
+                case 1:
+                    packet.openMessage(address.c_str(), tag_count)
+                            .string(_cueNumber->toString().toStdString().c_str())
+                            .closeMessage();
+                    break;
+                case 2:
+                    packet.openMessage(address.c_str(), tag_count)
+                            .string(_cueNumber->toString().toStdString().c_str())
+                            .string(_cueList->toString().toStdString().c_str())
+                            .closeMessage();
+                    break;
+                case 3:
+                    packet.openMessage(address.c_str(), tag_count)
+                            .string(_cueNumber->toString().toStdString().c_str())
+                            .string(_cueList->toString().toStdString().c_str())
+                            .string(_cuePath->toString().toStdString().c_str())
+                            .closeMessage();
+                    break;
+                default:
+                    return false;
+            }
+
+            break;
+
+        case MscCommandType::TimedGo:
+
+            if (!_timecode.has_value())
+                return false;
+
+            tag_count++;
+
+            if (_cueNumber.has_value())
+            {
+                tag_count++;
+                if (_cueList.has_value())
+                {
+                    tag_count++;
+                    if (_cuePath.has_value())
+                        tag_count++;
+                }
+            }
+
+            switch(tag_count)
+            {
+                case 1:
+                    packet.openMessage(address.c_str(), tag_count)
+                            .string(_timecode->toString().toStdString().c_str())
+                            .closeMessage();
+                    break;
+                case 2:
+                    packet.openMessage(address.c_str(), tag_count)
+                            .string(_timecode->toString().toStdString().c_str())
+                            .string(_cueNumber->toString().toStdString().c_str())
+                            .closeMessage();
+                    break;
+                case 3:
+                    packet.openMessage(address.c_str(), tag_count)
+                            .string(_timecode->toString().toStdString().c_str())
+                            .string(_cueNumber->toString().toStdString().c_str())
+                            .string(_cueList->toString().toStdString().c_str())
+                            .closeMessage();
+                    break;
+                case 4:
+                    packet.openMessage(address.c_str(), tag_count)
+                            .string(_timecode->toString().toStdString().c_str())
+                            .string(_cueNumber->toString().toStdString().c_str())
+                            .string(_cueList->toString().toStdString().c_str())
+                            .string(_cuePath->toString().toStdString().c_str())
+                            .closeMessage();
+                    break;
+                default:
+                    return false;
+            }
+
+            break;
+
+        case MscCommandType::Set:
+
+            if (!_controlNumber.has_value() || !_controlValue.has_value())
+                return false;
+
+            tag_count = 2;
+
+            packet.openMessage(address.c_str(), tag_count)
+                    .int32(_controlNumber.value())
+                    .int32(_controlValue.value())
+                    .closeMessage();
+
+            break;
+
+        case MscCommandType::Fire:
+
+            if (!_macroNumber.has_value())
+                return false;
+
+            tag_count = 1;
+
+            packet.openMessage(address.c_str(), tag_count)
+                    .int32(_macroNumber.value())
+                    .closeMessage();
+
+            break;
+
+        case MscCommandType::StandbyPlus:
+        case MscCommandType::StandbyMinus:
+        case MscCommandType::SequencePlus:
+        case MscCommandType::SequenceMinus:
+        case MscCommandType::StartClock:
+        case MscCommandType::StopClock:
+        case MscCommandType::ZeroClock:
+        case MscCommandType::MtcChaseOn:
+        case MscCommandType::MtcChaseOff:
+
+            if (_cueList.has_value())
+            {
+                tag_count = 1;
+                packet.openMessage(address.c_str(), tag_count)
+                        .string(_cueList->toString().toStdString().c_str())
+                        .closeMessage();
+            }
+            else
+            {
+                tag_count = 0;
+                packet.openMessage(address.c_str(), tag_count).closeMessage();
+            }
+
+            break;
+
+        case MscCommandType::SetClock:
+
+            if (!_timecode.has_value())
+                return false;
+
+            if (_cueList.has_value())
+            {
+                tag_count = 2;
+                packet.openMessage(address.c_str(), tag_count)
+                        .string(_timecode->toString().toStdString().c_str())
+                        .string(_cueList->toString().toStdString().c_str())
+                        .closeMessage();
+            }
+            else
+            {
+                tag_count = 1;
+                packet.openMessage(address.c_str(), tag_count)
+                        .string(_timecode->toString().toStdString().c_str())
+                        .closeMessage();
+            }
+
+            break;
+
+        case MscCommandType::OpenCueList:
+        case MscCommandType::CloseCueList:
+
+            if (!_cueList.has_value())
+                return false;
+
+            tag_count = 1;
+            packet.openMessage(address.c_str(), tag_count)
+                    .string(_cueList->toString().toStdString().c_str())
+                    .closeMessage();
+
+            break;
+
+        case MscCommandType::OpenCuePath:
+        case MscCommandType::CloseCuePath:
+
+            if (!_cuePath.has_value())
+                return false;
+
+            tag_count = 1;
+            packet.openMessage(address.c_str(), tag_count)
+                    .string(_cuePath->toString().toStdString().c_str())
+                    .closeMessage();
+
+            break;
+
+        case MscCommandType::AllOff:
+        case MscCommandType::Restore:
+        case MscCommandType::Reset:
+
+            tag_count = 0;
+            packet.openMessage(address.c_str(), tag_count).closeMessage();
+
+            break;
+
+        default:
+            return false;
+    }
+
+    array.resize(static_cast<int>(packet.size()));
     return true;
 }
 

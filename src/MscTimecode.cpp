@@ -31,6 +31,13 @@ int getFrameCount(MidiTimecodeFramerate framerate)
 	}
 }
 
+const QMap<MidiTimecodeFramerate, QString> MscTimecode::FRAMERATE_LABELS
+{
+    { MidiTimecodeFramerate::F24, "24" },
+    { MidiTimecodeFramerate::F25, "25" },
+    { MidiTimecodeFramerate::F30Df, "30DF" },
+    { MidiTimecodeFramerate::F30Nd, "30ND" }
+};
 
 MscTimecode::MscTimecode()
 	:  _framerate(MidiTimecodeFramerate::F30Df), 
@@ -148,6 +155,17 @@ QByteArray MscTimecode::ToByteArray() const
 		          : static_cast<char>(_subFrames != -1 ? _subFrames : 0);
 
 	return data;
+}
+
+QString MscTimecode::toString() const
+{
+    return QString("%1:%2:%3:%4/%5@%6")
+            .arg(QString::number(_hours),
+                 QString::number(_minutes),
+                 QString::number(_seconds),
+                 QString::number(_frames),
+                 QString::number(_subFrames),
+                 FRAMERATE_LABELS[_framerate]);
 }
 
 QDataStream& operator>>(QDataStream& stream, MscTimecode& timecode)

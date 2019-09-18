@@ -15,10 +15,10 @@
 
 #include "QCueRouter.hpp"
 
-const QString QCueRouter::SETTINGS_INPUTSERVICETYPE_KEY = "inputServiceType";
-const QString QCueRouter::SETTINGS_OUTPUTSERVICETYPE_KEY = "outputServiceType";
-const QString QCueRouter::SETTINGS_INPUTSERVICESETTINGS_KEY = "inputServiceSettings";
-const QString QCueRouter::SETTINGS_OUTPUTSERVICESETTINGS_KEY = "outputServiceSettings";
+const QString QCueRouter::SETTINGS_INPUTSERVICETYPE_KEY = "input_service_type";
+const QString QCueRouter::SETTINGS_OUTPUTSERVICETYPE_KEY = "output_service_type";
+const QString QCueRouter::SETTINGS_INPUTSERVICESETTINGS_KEY = "input_service_settings";
+const QString QCueRouter::SETTINGS_OUTPUTSERVICESETTINGS_KEY = "output_service_settings";
 
 QCueRouter::QCueRouter(QObject* parent)
     : QObject(parent),

@@ -43,8 +43,8 @@ int main(int argc, char* argv[])
 	QApplication a(argc, argv);
 	QApplication::setQuitOnLastWindowClosed(false);
 
-	QCoreApplication::setOrganizationName("The Impersonal Stereo");
-	QCoreApplication::setOrganizationDomain("theimpersonalstereo.com");
+    QCoreApplication::setOrganizationName("David Butler Design");
+    QCoreApplication::setOrganizationDomain("davidbutlerdesign.co.uk");
 	QCoreApplication::setApplicationName("CueTX");
     QCoreApplication::setApplicationVersion(version);
 
@@ -79,6 +79,7 @@ int main(int argc, char* argv[])
 
     QObject::connect(&preferencesWindow, &QPreferencesWindow::settingsChanged, [&](const QVariantMap& map)
     {
+        settingsManager.clearSettings();
         settingsManager.saveSettings(map);
 
         router.stop();

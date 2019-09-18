@@ -136,6 +136,8 @@ struct MscMessage
 
     static const int MSC_MESSAGE_MAX_LENGTH = 128;
 
+    static const QMap<MscCommandType, QString> COMMAND_OSC_LABELS;
+
     int _deviceId;
     MscCommandType _commandType;
     MscCommandFormat _commandFormat;
@@ -156,6 +158,8 @@ struct MscMessage
     MscMessage();
 
     bool toByteArray(QByteArray& array) const;
+
+    bool toOscPacket(QByteArray& array) const;
 
     void removeZeroPadding();
 };

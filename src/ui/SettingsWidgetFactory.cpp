@@ -3,7 +3,10 @@
 #include "input_services/QMidiMscInputServiceSettingsWidget.hpp"
 #include "input_services/QGmaMscInputServiceSettingsWidget.hpp"
 #include "input_services/QEosOscInputServiceSettingsWidget.hpp"
+#include "output_services/QDisguiseOscOutputServiceSettingsWidget.hpp"
 #include "output_services/QMidiMscOutputServiceSettingsWidget.hpp"
+#include "output_services/QGmaMscOutputServiceSettingsWidget.hpp"
+#include "output_services/QQLabOscOutputServiceSettingsWidget.hpp"
 
 QSettingsWidget* SettingsWidgetFactory::createInputSettingsWidget(InputServiceType serviceType, QWidget* parent)
 {
@@ -41,13 +44,13 @@ QSettingsWidget* SettingsWidgetFactory::createOutputSettingsWidget(OutputService
             return new QMidiMscOutputServiceSettingsWidget(parent);
 
         case OutputServiceType::GmaMsc:
-            return nullptr;
+            return new QGmaMscOutputServiceSettingsWidget(parent);
 
         case OutputServiceType::DisguiseOsc:
-            return nullptr;
+            return new QDisguiseOscOutputServiceSettingsWidget(parent);
 
         case OutputServiceType::QLabOsc:
-            return nullptr;
+            return new QQLabOscOutputServiceSettingsWidget(parent);
 
         default:
             Q_ASSERT(false); // Unknown output service type

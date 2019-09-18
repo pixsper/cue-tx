@@ -38,7 +38,10 @@ SOURCES += \
         src/ui/input_services/QGmaMscInputServiceSettingsWidget.cpp \
         src/ui/input_services/QEosOscInputServiceSettingsWidget.cpp \
         src/ui/input_services/QMidiMscInputServiceSettingsWidget.cpp \
-        src/ui/output_services/QMidiMscOutputServiceSettingsWidget.cpp
+        src/ui/output_services/QDisguiseOscOutputServiceSettingsWidget.cpp \
+        src/ui/output_services/QGmaMscOutputServiceSettingsWidget.cpp \
+        src/ui/output_services/QMidiMscOutputServiceSettingsWidget.cpp \
+        src/ui/output_services/QQLabOscOutputServiceSettingsWidget.cpp
 
 HEADERS += \
         src/MscCueId.hpp \
@@ -66,14 +69,20 @@ HEADERS += \
         src/ui/input_services/QGmaMscInputServiceSettingsWidget.hpp \
         src/ui/input_services/QEosOscInputServiceSettingsWidget.hpp \
         src/ui/input_services/QMidiMscInputServiceSettingsWidget.hpp \
-        src/ui/output_services/QMidiMscOutputServiceSettingsWidget.hpp
+        src/ui/output_services/QDisguiseOscOutputServiceSettingsWidget.hpp \
+        src/ui/output_services/QGmaMscOutputServiceSettingsWidget.hpp \
+        src/ui/output_services/QMidiMscOutputServiceSettingsWidget.hpp \
+        src/ui/output_services/QQLabOscOutputServiceSettingsWidget.hpp
 
 FORMS += \
     src/ui/QPreferencesWindow.ui \
     src/ui/input_services/QGmaMscInputServiceSettingsWidget.ui \
     src/ui/input_services/QEosOscInputServiceSettingsWidget.ui \
     src/ui/input_services/QMidiMscInputServiceSettingsWidget.ui \
-    src/ui/output_services/QMidiMscOutputServiceSettingsWidget.ui
+    src/ui/output_services/QDisguiseOscOutputServiceSettingsWidget.ui \
+    src/ui/output_services/QGmaMscOutputServiceSettingsWidget.ui \
+    src/ui/output_services/QMidiMscOutputServiceSettingsWidget.ui \
+    src/ui/output_services/QQLabOscOutputServiceSettingsWidget.ui
 
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

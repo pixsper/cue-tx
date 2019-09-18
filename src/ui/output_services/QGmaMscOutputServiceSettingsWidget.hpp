@@ -13,40 +13,29 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CueTX.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "QSettingsManager.hpp"
+#pragma once
 
-QSettingsManager::QSettingsManager(QObject *parent)
-    : QObject(parent)
+#include "../QSettingsWidget.hpp"
+
+namespace Ui
 {
-
+    class QGmaMscOutputServiceSettingsWidget;
 }
 
-void QSettingsManager::saveSettings(const QVariantMap& map)
+class QGmaMscOutputServiceSettingsWidget : public QSettingsWidget
 {
-    QMapIterator<QString, QVariant> it(map);
-    while (it.hasNext())
-    {
-        it.next();
-        _settings.setValue(it.key(), it.value());
-    }
-}
+    Q_OBJECT
 
-QVariantMap QSettingsManager::loadSettings()
-{
-    QVariantMap map;
+    Ui::QGmaMscOutputServiceSettingsWidget* ui;
 
-    for(const auto& key : _settings.childKeys())
-        map.insert(key, _settings.value(key));
+public:
+    explicit QGmaMscOutputServiceSettingsWidget(QWidget* parent = nullptr);
+    ~QGmaMscOutputServiceSettingsWidget() override;
 
-    return map;
-}
+    void refresh() override;
 
-void QSettingsManager::clearSettings()
-{
-    _settings.clear();
-}
+    void setSettings(const QVariantMap& settings) override;
+    QVariantMap getSettings() override;
+    void setDefaultSettings() override;
+};
 
-bool QSettingsManager::isSettingsEmpty()
-{
-    return _settings.allKeys().size() == 0;
-}

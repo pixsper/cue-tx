@@ -17,6 +17,7 @@
 
 #include <QByteArray>
 #include <QDataStream>
+#include <QMap>
 
 enum class MidiTimecodeFramerate : quint8
 {
@@ -38,6 +39,8 @@ enum class MidiTimecodeStatusFlags : quint8
 
 struct MscTimecode
 {
+    static const QMap<MidiTimecodeFramerate, QString> FRAMERATE_LABELS;
+
     MidiTimecodeFramerate _framerate;
 
     int _hours;
@@ -61,6 +64,8 @@ public:
     static bool FromByteArray(const QByteArray& data, MscTimecode& value);
 
     QByteArray ToByteArray() const;
+
+    QString toString() const;
 };
 
 QDataStream& operator>>(QDataStream& stream, MscTimecode& timecode);

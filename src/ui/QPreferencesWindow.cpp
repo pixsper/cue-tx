@@ -16,6 +16,7 @@
 #include "QPreferencesWindow.hpp"
 #include "ui_QPreferencesWindow.h"
 #include "SettingsWidgetFactory.hpp"
+#include "../QCueRouter.hpp"
 
 #include <QPushButton>
 
@@ -69,23 +70,87 @@ QPreferencesWindow::~QPreferencesWindow()
 
 void QPreferencesWindow::refreshAndShow()
 {
-    if (ui->groupBoxInputSettings->layout()->children().count() != 0)
-        reinterpret_cast<QSettingsWidget*>(ui->groupBoxInputSettings->layout()->children().front())->refresh();
+    if (_inputSettingsWidget)
+        _inputSettingsWidget->refresh();
 
-    if (ui->groupBoxOutputSettings->layout()->children().count() != 0)
-        reinterpret_cast<QSettingsWidget*>(ui->groupBoxOutputSettings->layout()->children().front())->refresh();
+    if (_outputSettingsWidget)
+        _outputSettingsWidget->refresh();
 
     show();
 }
 
 void QPreferencesWindow::setSettings(const QVariantMap& settings)
 {
-     setDirty(false);
+    {
+         auto it = settings.find(QCueRouter::SETTINGS_INPUTSERVICETYPE_KEY);
+         if (it != settings.end())
+         {
+             InputServiceType inputServiceType = static_cast<InputServiceType>(it->toInt());
+
+             for(int i = 0; i < inputServiceOptionList.size(); ++i)
+             {
+                 if (inputServiceOptionList[i].first == inputServiceType)
+                 {
+                     ui->comboBoxInput->setCurrentIndex(i);
+                     break;
+                 }
+             }
+         }
+    }
+
+    updateInputSettingsWidget();
+
+    if (_inputSettingsWidget)
+    {
+        auto it = settings.find(QCueRouter::SETTINGS_INPUTSERVICESETTINGS_KEY);
+        if (it != settings.end())
+            _inputSettingsWidget->setSettings(it->toMap());
+    }
+
+    {
+        auto it = settings.find(QCueRouter::SETTINGS_OUTPUTSERVICETYPE_KEY);
+        if (it != settings.end())
+        {
+            OutputServiceType outputServiceType = static_cast<OutputServiceType>(it->toInt());
+
+            for(int i = 0; i < outputServiceOptionList.size(); ++i)
+            {
+                if (outputServiceOptionList[i].first == outputServiceType)
+                {
+                    ui->comboBoxOutput->setCurrentIndex(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    updateOutputSettingsWidget();
+
+    if (_outputSettingsWidget)
+    {
+        auto it = settings.find(QCueRouter::SETTINGS_OUTPUTSERVICESETTINGS_KEY);
+        if (it != settings.end())
+            _outputSettingsWidget->setSettings(it->toMap());
+    }
+
+    setDirty(false);
 }
 
 QVariantMap QPreferencesWindow::getSettings()
 {
-    return QVariantMap();
+    auto settings = QVariantMap
+    {
+        { QCueRouter::SETTINGS_INPUTSERVICETYPE_KEY, ui->comboBoxInput->currentData() },
+        { QCueRouter::SETTINGS_OUTPUTSERVICETYPE_KEY, ui->comboBoxOutput->currentData() }
+    };
+
+    if (_inputSettingsWidget)
+        settings[QCueRouter::SETTINGS_INPUTSERVICESETTINGS_KEY] = _inputSettingsWidget->getSettings();
+
+    if (_outputSettingsWidget)
+        settings[QCueRouter::SETTINGS_OUTPUTSERVICESETTINGS_KEY] = _outputSettingsWidget->getSettings();
+
+    return settings;
 }
 
 void QPreferencesWindow::updateVisibility()
@@ -103,11 +168,18 @@ void QPreferencesWindow::updateInputSettingsWidget()
         delete child;
     }
 
-    auto pair = inputServiceOptionList[ui->comboBoxInput->currentIndex()];
-    auto inputSettingsWidget = SettingsWidgetFactory::createInputSettingsWidget(pair.first);
+    _inputSettingsWidget = nullptr;
 
-    if (inputSettingsWidget != nullptr)
-        ui->groupBoxInputSettings->layout()->addWidget(inputSettingsWidget);
+    auto pair = inputServiceOptionList[ui->comboBoxInput->currentIndex()];
+    _inputSettingsWidget = SettingsWidgetFactory::createInputSettingsWidget(pair.first);
+
+    if (_inputSettingsWidget != nullptr)
+    {
+        _inputSettingsWidget->setDefaultSettings();
+        connect(_inputSettingsWidget, &QSettingsWidget::settingsChanged,
+                [&](const QVariantMap&) { setDirty(true); });
+        ui->groupBoxInputSettings->layout()->addWidget(_inputSettingsWidget);
+    }
 }
 
 void QPreferencesWindow::updateOutputSettingsWidget()
@@ -119,11 +191,18 @@ void QPreferencesWindow::updateOutputSettingsWidget()
         delete child;
     }
 
-    auto pair = outputServiceOptionList[ui->comboBoxOutput->currentIndex()];
-    auto outputSettingsWidget = SettingsWidgetFactory::createOutputSettingsWidget(pair.first);
+     _outputSettingsWidget = nullptr;
 
-    if (outputSettingsWidget != nullptr)
-        ui->groupBoxOutputSettings->layout()->addWidget(outputSettingsWidget);
+    auto pair = outputServiceOptionList[ui->comboBoxOutput->currentIndex()];
+    _outputSettingsWidget = SettingsWidgetFactory::createOutputSettingsWidget(pair.first);
+
+    if (_outputSettingsWidget != nullptr)
+    {
+        _outputSettingsWidget->setDefaultSettings();
+        connect(_outputSettingsWidget, &QSettingsWidget::settingsChanged,
+                [&](const QVariantMap&) { setDirty(true); });
+        ui->groupBoxOutputSettings->layout()->addWidget(_outputSettingsWidget);
+    }
 }
 
 void QPreferencesWindow::setDirty(bool isDirty)
@@ -132,15 +211,16 @@ void QPreferencesWindow::setDirty(bool isDirty)
     ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(_isDirty);
 }
 
-void QPreferencesWindow::onComboBoxInputCurrentIndexChanged(int index)
+void QPreferencesWindow::onComboBoxInputCurrentIndexChanged(int)
 {
-     _isDirty = true;
+    setDirty(true);
     updateInputSettingsWidget();
     updateVisibility();
 }
 
-void QPreferencesWindow::onComboBoxOutputCurrentIndexChanged(int index)
+void QPreferencesWindow::onComboBoxOutputCurrentIndexChanged(int)
 {
+    setDirty(true);
     updateOutputSettingsWidget();
     updateVisibility();
 }

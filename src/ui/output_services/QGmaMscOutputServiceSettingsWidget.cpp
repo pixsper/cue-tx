@@ -13,40 +13,37 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with CueTX.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "QSettingsManager.hpp"
+#include "QGmaMscOutputServiceSettingsWidget.hpp"
+#include "ui_QGmaMscOutputServiceSettingsWidget.h"
 
-QSettingsManager::QSettingsManager(QObject *parent)
-    : QObject(parent)
+QGmaMscOutputServiceSettingsWidget::QGmaMscOutputServiceSettingsWidget(QWidget *parent) :
+    QSettingsWidget(parent),
+    ui(new Ui::QGmaMscOutputServiceSettingsWidget)
+{
+    ui->setupUi(this);
+}
+
+QGmaMscOutputServiceSettingsWidget::~QGmaMscOutputServiceSettingsWidget()
+{
+    delete ui;
+}
+
+void QGmaMscOutputServiceSettingsWidget::refresh()
 {
 
 }
 
-void QSettingsManager::saveSettings(const QVariantMap& map)
+void QGmaMscOutputServiceSettingsWidget::setSettings(const QVariantMap& settings)
 {
-    QMapIterator<QString, QVariant> it(map);
-    while (it.hasNext())
-    {
-        it.next();
-        _settings.setValue(it.key(), it.value());
-    }
+
 }
 
-QVariantMap QSettingsManager::loadSettings()
+QVariantMap QGmaMscOutputServiceSettingsWidget::getSettings()
 {
-    QVariantMap map;
-
-    for(const auto& key : _settings.childKeys())
-        map.insert(key, _settings.value(key));
-
-    return map;
+    return QVariantMap();
 }
 
-void QSettingsManager::clearSettings()
+void QGmaMscOutputServiceSettingsWidget::setDefaultSettings()
 {
-    _settings.clear();
-}
 
-bool QSettingsManager::isSettingsEmpty()
-{
-    return _settings.allKeys().size() == 0;
 }

@@ -18,7 +18,9 @@
 #include <QMainWindow>
 #include <QList>
 #include <QAbstractButton>
+
 #include "../ServiceTypes.hpp"
+#include "QSettingsWidget.hpp"
 
 namespace Ui
 {
@@ -33,6 +35,9 @@ class QPreferencesWindow : public QMainWindow
     static const QList<QPair<OutputServiceType, QString>> outputServiceOptionList;
 
     Ui::QPreferencesWindow* ui;
+
+    QSettingsWidget* _inputSettingsWidget = nullptr;
+    QSettingsWidget* _outputSettingsWidget = nullptr;
 
     bool _isDirty = false;
 
