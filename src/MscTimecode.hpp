@@ -18,6 +18,7 @@
 #include <QByteArray>
 #include <QDataStream>
 #include <QMap>
+#include "nonstd/optional.hpp"
 
 enum class MidiTimecodeFramerate : quint8
 {
@@ -69,5 +70,6 @@ public:
 };
 
 QDataStream& operator>>(QDataStream& stream, MscTimecode& timecode);
+QDataStream& operator>>(QDataStream& stream, nonstd::optional<MscTimecode>& timecode);
 QDataStream& operator<<(QDataStream& stream, const MscTimecode& timecode);
 

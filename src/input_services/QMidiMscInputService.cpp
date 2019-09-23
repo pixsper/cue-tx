@@ -15,6 +15,7 @@
 
 #include "QMidiMscInputService.hpp"
 
+const QString QMidiMscInputService::VIRTUAL_MIDI_PORT_NAME = "to CueTX";
 const QString QMidiMscInputService::SETTINGS_PORTNAME_KEY = "in_midi_port";
 const QString QMidiMscInputService::SETTINGS_PORTNAME_DEFAULT = "";
 const QString QMidiMscInputService::SETTINGS_ISVIRTUAL_KEY = "in_midi_is_virtual";
@@ -42,10 +43,9 @@ bool QMidiMscInputService::start(const QVariantMap& settings)
 
 #ifdef Q_OS_MAC
     const auto itVPort = settings.find(SETTINGS_ISVIRTUAL_KEY);
-
-    if ((itVPort != settings.end() && itVPort.value().toBool()) || SETTINGS_ISVIRTUAL_DEFAULT)
+    if ((itVPort != settings.end() && itVPort.value().toBool()))
     {
-        _midiIn->openVirtualPort(RTMIDI_PORT_NAME);
+        _midiIn->openVirtualPort(VIRTUAL_MIDI_PORT_NAME);
         return _midiIn->isPortOpen();
     }
 
@@ -59,14 +59,14 @@ bool QMidiMscInputService::start(const QVariantMap& settings)
         {
             if (pair.second == itPort.value().toString())
             {
-                _midiIn->openPort(pair.first, RTMIDI_PORT_NAME);
+                _midiIn->openPort(pair.first, VIRTUAL_MIDI_PORT_NAME);
                 return _midiIn->isPortOpen();
             }
         }
     }
 
     // Just open the first port we can find, if any
-    _midiIn->openPort(0, RTMIDI_PORT_NAME);
+    _midiIn->openPort(0, VIRTUAL_MIDI_PORT_NAME);
     return _midiIn->isPortOpen();
 }
 

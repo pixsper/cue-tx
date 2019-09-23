@@ -113,21 +113,21 @@ bool MscMessage::fromByteArray(const QByteArray& array, MscMessage& message)
 
             if (peek != static_cast<char>(SYSEX_END))
             {
-                data >> cueNumber.value();
+                data >> cueNumber;
 
                 if (data.device()->peek(&peek, 1) != 1)
                     return false;
 
                 if (peek != static_cast<char>(SYSEX_END))
                 {
-                    data >> cueList.value();
+                    data >> cueList;
 
                     if (data.device()->peek(&peek, 1) != 1)
                         return false;
 
                     if (peek != static_cast<char>(SYSEX_END))
                     {
-                        data >> cuePath.value();
+                        data >> cuePath;
                     }
                 }
             }
@@ -136,28 +136,28 @@ bool MscMessage::fromByteArray(const QByteArray& array, MscMessage& message)
 
         case MscCommandType::TimedGo:
 
-            data >> timecode.value();
+            data >> timecode;
 
             if (data.device()->peek(&peek, 1) != 1)
                 return false;
 
             if (peek != static_cast<char>(SYSEX_END))
             {
-                data >> cueNumber.value();
+                data >> cueNumber;
 
                 if (data.device()->peek(&peek, 1) != 1)
                     return false;
 
                 if (peek != static_cast<char>(SYSEX_END))
                 {
-                    data >> cueList.value();
+                    data >> cueList;
 
                     if (data.device()->peek(&peek, 1) != 1)
                         return false;
 
                     if (peek != static_cast<char>(SYSEX_END))
                     {
-                        data >> cuePath.value();
+                        data >> cuePath;
                     }
                 }
             }
@@ -181,7 +181,7 @@ bool MscMessage::fromByteArray(const QByteArray& array, MscMessage& message)
                 return false;
 
             if (peek != static_cast<char>(SYSEX_END))
-                data >> timecode.value();
+                data >> timecode;
         }
             break;
 
@@ -210,19 +210,19 @@ bool MscMessage::fromByteArray(const QByteArray& array, MscMessage& message)
                 return false;
 
             if (peek != static_cast<char>(SYSEX_END))
-                data >> cueList.value();
+                data >> cueList;
 
             break;
 
         case MscCommandType::SetClock:
 
-            data >> timecode.value();
+            data >> timecode;
 
             if (data.device()->peek(&peek, 1) != 1)
                 return false;
 
             if (peek != static_cast<char>(SYSEX_END))
-                data >> cueList.value();
+                data >> cueList;
 
             break;
 
@@ -235,7 +235,7 @@ bool MscMessage::fromByteArray(const QByteArray& array, MscMessage& message)
             if (peek == static_cast<char>(SYSEX_END))
                 return false;
 
-            data >> cueList.value();
+            data >> cueList;
 
             break;
 
@@ -248,7 +248,7 @@ bool MscMessage::fromByteArray(const QByteArray& array, MscMessage& message)
             if (peek == static_cast<char>(SYSEX_END))
                 return false;
 
-            data >> cuePath.value();
+            data >> cuePath;
 
             break;
 
@@ -294,7 +294,7 @@ bool MscMessage::toByteArray(QByteArray& array) const
 {
     array.reserve(MSC_MESSAGE_MAX_LENGTH);
 
-    QDataStream stream(array);
+    QDataStream stream(&array, QIODevice::OpenModeFlag::WriteOnly);
 
     stream << SYSEX_START;
     stream << SYSEX_REALTIME_ID;

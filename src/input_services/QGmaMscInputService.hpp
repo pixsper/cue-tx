@@ -39,6 +39,7 @@ public:
     static const quint16 SETTINGS_HOSTPORT_DEFAULT = 6004;
     static const quint16 SETTINGS_HOSTPORT_MIN = 6000;
     static const quint16 SETTINGS_HOSTPORT_MAX = 6100;
+
     static const QString SETTINGS_REMOVEZEROPADDING_KEY;
     static const bool SETTINGS_REMOVEZEROPADDING_DEFAULT = true;
 

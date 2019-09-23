@@ -23,13 +23,11 @@ class QMidiMscInputService : public QCueTxInputService
 {
     Q_OBJECT
 
-    const QString RTMIDI_PORT_NAME = "Cue TX Input";
-
-
     QRtMidiIn* _midiIn;
 
-
 public:
+    static const QString VIRTUAL_MIDI_PORT_NAME;
+
     static const QString SETTINGS_PORTNAME_KEY;
     static const QString SETTINGS_PORTNAME_DEFAULT;
     static const QString SETTINGS_ISVIRTUAL_KEY;

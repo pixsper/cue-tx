@@ -15,15 +15,32 @@
 
 #include "QMidiMscInputServiceSettingsWidget.hpp"
 #include "ui_QMidiMscInputServiceSettingsWidget.h"
+#include "../../input_services/QMidiMscInputService.hpp"
+#include "../../output_services/QMidiMscOutputService.hpp"
 #include "../../qrtmidi/QRtMidiIn.hpp"
 
 QMidiMscInputServiceSettingsWidget::QMidiMscInputServiceSettingsWidget(QWidget *parent) :
     QSettingsWidget(parent),
-    ui(new Ui::QMidiMscInputServiceSettingsWidget)
+    ui(new Ui::QMidiMscInputServiceSettingsWidget),
+    _currentMidiPortName("")
 {
     ui->setupUi(this);
 
+#ifndef Q_OS_MAC
+    ui->checkBoxUseVirtualPort->setVisible(false);
+#endif
+
     updateMidiPortList();
+
+    connect(ui->checkBoxUseVirtualPort, qOverload<int>(&QCheckBox::stateChanged),
+            [&](int)
+    {
+        ui->comboBoxMidiInPort->setEnabled(!ui->checkBoxUseVirtualPort->isChecked());
+        settingsChanged(getSettings());
+    });
+
+    connect(ui->comboBoxMidiInPort, qOverload<int>(&QComboBox::currentIndexChanged),
+            [&](int) { settingsChanged(getSettings()); });
 }
 
 QMidiMscInputServiceSettingsWidget::~QMidiMscInputServiceSettingsWidget()
@@ -34,21 +51,44 @@ QMidiMscInputServiceSettingsWidget::~QMidiMscInputServiceSettingsWidget()
 void QMidiMscInputServiceSettingsWidget::refresh()
 {
     updateMidiPortList();
+    selectCurrentMidiPort();
 }
 
 void QMidiMscInputServiceSettingsWidget::setSettings(const QVariantMap& settings)
 {
+    updateMidiPortList();
 
+    {
+        const auto it = settings.find(QMidiMscInputService::SETTINGS_ISVIRTUAL_KEY);
+        if (it != settings.end())
+            ui->checkBoxUseVirtualPort->setChecked(it->toBool());
+    }
+
+    {
+        const auto it = settings.find(QMidiMscInputService::SETTINGS_PORTNAME_KEY);
+        if (it != settings.end())
+        {
+            _currentMidiPortName = it->toString();
+            selectCurrentMidiPort();
+        }
+    }
 }
 
 QVariantMap QMidiMscInputServiceSettingsWidget::getSettings()
 {
-    return QVariantMap();
+    return QVariantMap
+    {
+        { QMidiMscInputService::SETTINGS_ISVIRTUAL_KEY, ui->checkBoxUseVirtualPort->isChecked() },
+        { QMidiMscInputService::SETTINGS_PORTNAME_KEY, ui->comboBoxMidiInPort->currentData() }
+    };
 }
 
 void QMidiMscInputServiceSettingsWidget::setDefaultSettings()
 {
+    updateMidiPortList();
 
+    ui->checkBoxUseVirtualPort->setChecked(QMidiMscInputService::SETTINGS_ISVIRTUAL_DEFAULT);
+    ui->comboBoxMidiInPort->setCurrentIndex(0);
 }
 
 void QMidiMscInputServiceSettingsWidget::updateMidiPortList()
@@ -58,27 +98,20 @@ void QMidiMscInputServiceSettingsWidget::updateMidiPortList()
     QRtMidiIn midiIn;
     auto ports = midiIn.getMidiInPorts();
 
-#ifdef Q_OS_MAC
-
-    ui->comboBoxMidiInPort->addItem("Virtual Port (to Cue TX)", QVariant(0));
+    ui->comboBoxMidiInPort->addItem("None", QString(""));
 
     for(const auto& port : ports)
-        ui->comboBoxMidiInPort->addItem(port, port);
-
-#else
-
-    if (ports.count() == 0)
     {
-        ui->comboBoxMidiInPort->setEnabled(false);
-        ui->comboBoxMidiInPort->addItem("No MIDI In Ports available", QVariant(-1));
-    }
-    else
-    {
-        for(const auto& port : ports)
+        if (port != QMidiMscOutputService::VIRTUAL_MIDI_PORT_NAME)
             ui->comboBoxMidiInPort->addItem(port, port);
     }
+}
 
-#endif
-
-
+void QMidiMscInputServiceSettingsWidget::selectCurrentMidiPort()
+{
+    int index = ui->comboBoxMidiInPort->findData(_currentMidiPortName);
+    if (index == -1)
+        ui->comboBoxMidiInPort->setCurrentIndex(0);
+    else
+        ui->comboBoxMidiInPort->setCurrentIndex(index);
 }

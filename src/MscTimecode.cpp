@@ -176,6 +176,13 @@ QDataStream& operator>>(QDataStream& stream, MscTimecode& timecode)
 	return stream;
 }
 
+QDataStream& operator>>(QDataStream& stream, nonstd::optional<MscTimecode>& timecode)
+{
+    if (!timecode.has_value())
+        timecode.emplace();
+    return stream >> timecode.value();
+}
+
 QDataStream& operator<<(QDataStream& stream, const MscTimecode& timecode)
 {
 	const QByteArray data = timecode.ToByteArray();

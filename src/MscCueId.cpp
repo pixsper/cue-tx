@@ -96,12 +96,18 @@ QDataStream& operator>>(QDataStream& stream, MscCueId& cueId)
 {
     QString s;
     quint8 b;
-    stream >> b;
+    quint8 peek;
 
-    while(b != 0 && b != MscMessage::SYSEX_END)
+    if (stream.device()->peek((char*)&peek, 1) != 1)
+        return stream;
+
+    while(peek != 0 && peek != MscMessage::SYSEX_END)
     {
-        s.append(b);
         stream >> b;
+        s.append(b);
+
+        if (stream.device()->peek((char*)&peek, 1) != 1)
+            break;
     }
 
     cueId = s;
@@ -109,9 +115,17 @@ QDataStream& operator>>(QDataStream& stream, MscCueId& cueId)
     return stream;
 }
 
+QDataStream& operator>>(QDataStream& stream, nonstd::optional<MscCueId>& cueId)
+{
+    if (!cueId.has_value())
+        cueId.emplace();
+
+    return stream >> cueId.value();
+}
+
 QDataStream& operator<<(QDataStream& stream, const MscCueId& cueId)
 {
     std::string s = cueId.toString().toStdString();
-    stream.writeBytes(s.data(), (uint)s.length());
+    stream.writeRawData(s.data(), (uint)s.length());
     return stream;
 }

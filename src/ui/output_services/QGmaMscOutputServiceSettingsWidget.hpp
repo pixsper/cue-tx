@@ -32,7 +32,7 @@ public:
     explicit QGmaMscOutputServiceSettingsWidget(QWidget* parent = nullptr);
     ~QGmaMscOutputServiceSettingsWidget() override;
 
-    void refresh() override;
+    void refresh() override { }
 
     void setSettings(const QVariantMap& settings) override;
     QVariantMap getSettings() override;

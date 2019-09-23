@@ -17,6 +17,7 @@
 
 #include <QRegularExpression>
 #include <QDataStream>
+#include "nonstd/optional.hpp"
 
 class MscCueId
 {
@@ -42,4 +43,5 @@ public:
 };
 
 QDataStream& operator>>(QDataStream& stream, MscCueId& cueId);
+QDataStream& operator>>(QDataStream& stream, nonstd::optional<MscCueId>& cueId);
 QDataStream& operator<<(QDataStream& stream, const MscCueId& cueId);

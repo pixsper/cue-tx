@@ -15,6 +15,7 @@
 
 #include "QMidiMscOutputService.hpp"
 
+const QString QMidiMscOutputService::VIRTUAL_MIDI_PORT_NAME = "from CueTX";
 const QString QMidiMscOutputService::SETTINGS_PORTNAME_KEY = "out_midi_port";
 const QString QMidiMscOutputService::SETTINGS_PORTNAME_DEFAULT = "";
 const QString QMidiMscOutputService::SETTINGS_ISVIRTUAL_KEY = "out_midi_is_virtual";
@@ -43,7 +44,7 @@ bool QMidiMscOutputService::start(const QVariantMap& settings)
 
     if ((itVPort != settings.end() && itVPort.value().toBool()) || SETTINGS_ISVIRTUAL_DEFAULT)
     {
-        _midiOut->openVirtualPort(RTMIDI_PORT_NAME);
+        _midiOut->openVirtualPort(VIRTUAL_MIDI_PORT_NAME);
         return _midiOut->isPortOpen();
     }
 
@@ -57,14 +58,14 @@ bool QMidiMscOutputService::start(const QVariantMap& settings)
         {
             if (pair.second == itPort.value().toString())
             {
-                _midiOut->openPort(pair.first, RTMIDI_PORT_NAME);
+                _midiOut->openPort(pair.first, VIRTUAL_MIDI_PORT_NAME);
                 return _midiOut->isPortOpen();
             }
         }
     }
 
     // Just open the first port we can find, if any
-    _midiOut->openPort(0, RTMIDI_PORT_NAME);
+    _midiOut->openPort(0, VIRTUAL_MIDI_PORT_NAME);
     return _midiOut->isPortOpen();
 }
 

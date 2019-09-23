@@ -15,49 +15,38 @@
 
 #include "QGmaMscOutputService.hpp"
 
-const QString QGmaMscOutputService::SETTINGS_HOSTIP_KEY = "out_gma_host_ip";
-const QString QGmaMscOutputService::SETTINGS_HOSTIP_DEFAULT = "127.0.0.1";
-
 const QString QGmaMscOutputService::SETTINGS_HOSTPORT_KEY = "out_gma_host_port";
 const quint16 QGmaMscOutputService::SETTINGS_HOSTPORT_DEFAULT;
+
+
+const QString QGmaMscOutputService::SETTINGS_ADDZEROPADDING_KEY = "out_gma_add_zero_padding";
+const bool QGmaMscOutputService::SETTINGS_ADDZEROPADDING_DEFAULT;
 
 QVariantMap QGmaMscOutputService::staticDefaultSettings()
 {
     return QVariantMap
     {
-        { SETTINGS_HOSTIP_KEY, SETTINGS_HOSTIP_DEFAULT },
-        { SETTINGS_HOSTPORT_KEY, SETTINGS_HOSTPORT_DEFAULT }
+        { SETTINGS_HOSTPORT_KEY, SETTINGS_HOSTPORT_DEFAULT },
+        { SETTINGS_ADDZEROPADDING_KEY, SETTINGS_ADDZEROPADDING_DEFAULT }
     };
 }
 
 QGmaMscOutputService::QGmaMscOutputService(QObject* parent)
     : QCueTxOutputService(parent),
-      _hostIp(SETTINGS_HOSTIP_DEFAULT),
-      _hostPort(SETTINGS_HOSTPORT_DEFAULT),
-      _udpSocket(new QUdpSocket(this))
+      _udpSocket(new QUdpSocket(this)),
+      _udpPort(SETTINGS_HOSTPORT_DEFAULT),
+      _isAddZeroPadding(SETTINGS_ADDZEROPADDING_DEFAULT)
 {
 }
 
 bool QGmaMscOutputService::start(const QVariantMap& settings)
 {
-    const auto itIp = settings.find(SETTINGS_HOSTIP_KEY);
-
-    if (itIp != settings.end())
-        _hostIp = QHostAddress(itIp.value().toString());
-    else
-        _hostIp = QHostAddress(SETTINGS_HOSTIP_DEFAULT);
-
     const auto itPort = settings.find(SETTINGS_HOSTPORT_KEY);
 
     if (itPort != settings.end())
-        _hostPort = static_cast<quint16>(itPort.value().toInt());
+        _udpPort = static_cast<quint16>(itPort.value().toInt());
     else
-        _hostPort = SETTINGS_HOSTPORT_DEFAULT;
-
-    if (_hostIp.isNull())
-        return false;
-
-    _udpSocket->bind(QHostAddress(QHostAddress::AnyIPv4), 0);
+        _udpPort = SETTINGS_HOSTPORT_DEFAULT;
 
     return true;
 }
@@ -65,27 +54,23 @@ bool QGmaMscOutputService::start(const QVariantMap& settings)
 void QGmaMscOutputService::stop()
 {
     _udpSocket->close();
-    _hostIp.clear();
 }
 
 void QGmaMscOutputService::sendMessage(const MscMessage& message)
 {
-    if (_hostIp.isNull())
-        return;
-
     QByteArray array;
     if (message.toByteArray(array))
     {
         QByteArray header(MSC_GMA_HEADER_LENGTH, 0);
-        QDataStream stream(header);
+        QDataStream stream(&header, QIODevice::OpenModeFlag::WriteOnly);
         stream.setByteOrder(QDataStream::LittleEndian);
 
-        stream.writeBytes(MSC_GMAHEADER_ID1, sizeof(MSC_GMAHEADER_ID1));
-        stream.writeBytes(MSC_GMAHEADER_ID2, sizeof(MSC_GMAHEADER_ID2));
+        stream.writeRawData(MSC_GMAHEADER_ID1, sizeof(MSC_GMAHEADER_ID1));
+        stream.writeRawData(MSC_GMAHEADER_ID2, sizeof(MSC_GMAHEADER_ID2));
         stream << static_cast<qint32>(array.size() + MSC_GMA_HEADER_LENGTH);
 
         array.insert(0, header);
 
-        _udpSocket->writeDatagram(array, _hostIp, _hostPort);
+        _udpSocket->writeDatagram(array, QHostAddress::Broadcast, _udpPort);
     }
 }

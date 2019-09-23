@@ -28,6 +28,8 @@ class QMidiMscInputServiceSettingsWidget : public QSettingsWidget
 
     Ui::QMidiMscInputServiceSettingsWidget* ui;
 
+    QString _currentMidiPortName;
+
 public:
     explicit QMidiMscInputServiceSettingsWidget(QWidget* parent = nullptr);
     ~QMidiMscInputServiceSettingsWidget() override;
@@ -40,5 +42,6 @@ public:
 
 private:
     void updateMidiPortList();
+    void selectCurrentMidiPort();
 };
 

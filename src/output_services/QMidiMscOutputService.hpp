@@ -25,10 +25,8 @@ class QMidiMscOutputService : public QCueTxOutputService
 
     QRtMidiOut* _midiOut;
 
-    const char* RTMIDI_PORT_NAME = "Cue TX Output";
-
-
 public:
+    static const QString VIRTUAL_MIDI_PORT_NAME;
     static const QString SETTINGS_PORTNAME_KEY;
     static const QString SETTINGS_PORTNAME_DEFAULT;
     static const QString SETTINGS_ISVIRTUAL_KEY;

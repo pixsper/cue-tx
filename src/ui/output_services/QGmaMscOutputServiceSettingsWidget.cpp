@@ -15,12 +15,22 @@
 
 #include "QGmaMscOutputServiceSettingsWidget.hpp"
 #include "ui_QGmaMscOutputServiceSettingsWidget.h"
+#include "../../output_services/QGmaMscOutputService.hpp"
 
 QGmaMscOutputServiceSettingsWidget::QGmaMscOutputServiceSettingsWidget(QWidget *parent) :
     QSettingsWidget(parent),
     ui(new Ui::QGmaMscOutputServiceSettingsWidget)
 {
     ui->setupUi(this);
+
+    ui->spinBoxOutputUdpPort->setMinimum(QGmaMscOutputService::SETTINGS_HOSTPORT_MIN);
+    ui->spinBoxOutputUdpPort->setMaximum(QGmaMscOutputService::SETTINGS_HOSTPORT_MAX);
+
+    connect(ui->spinBoxOutputUdpPort, qOverload<int>(&QSpinBox::valueChanged),
+            [&](int) { settingsChanged(getSettings()); });
+
+    connect(ui->checkBoxAddZeroPadding, &QCheckBox::stateChanged,
+            [&](int) { settingsChanged(getSettings()); });
 }
 
 QGmaMscOutputServiceSettingsWidget::~QGmaMscOutputServiceSettingsWidget()
@@ -28,22 +38,32 @@ QGmaMscOutputServiceSettingsWidget::~QGmaMscOutputServiceSettingsWidget()
     delete ui;
 }
 
-void QGmaMscOutputServiceSettingsWidget::refresh()
-{
-
-}
-
 void QGmaMscOutputServiceSettingsWidget::setSettings(const QVariantMap& settings)
 {
+    {
+        const auto it = settings.find(QGmaMscOutputService::SETTINGS_HOSTPORT_KEY);
+        if (it != settings.end())
+            ui->spinBoxOutputUdpPort->setValue(it.value().toInt());
+    }
 
+    {
+        const auto it = settings.find(QGmaMscOutputService::SETTINGS_ADDZEROPADDING_KEY);
+        if (it != settings.end())
+            ui->checkBoxAddZeroPadding->setChecked(it.value().toBool());
+    }
 }
 
 QVariantMap QGmaMscOutputServiceSettingsWidget::getSettings()
 {
-    return QVariantMap();
+    return QVariantMap
+    {
+        { QGmaMscOutputService::SETTINGS_HOSTPORT_KEY, ui->spinBoxOutputUdpPort->value() },
+        { QGmaMscOutputService::SETTINGS_ADDZEROPADDING_KEY, ui->checkBoxAddZeroPadding->isChecked() }
+    };
 }
 
 void QGmaMscOutputServiceSettingsWidget::setDefaultSettings()
 {
-
+    ui->spinBoxOutputUdpPort->setValue(QGmaMscOutputService::SETTINGS_HOSTPORT_DEFAULT);
+    ui->checkBoxAddZeroPadding->setChecked(QGmaMscOutputService::SETTINGS_ADDZEROPADDING_DEFAULT);
 }
