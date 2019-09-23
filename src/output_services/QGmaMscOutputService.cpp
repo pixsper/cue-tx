@@ -65,8 +65,8 @@ void QGmaMscOutputService::sendMessage(const MscMessage& message)
         QDataStream stream(&header, QIODevice::OpenModeFlag::WriteOnly);
         stream.setByteOrder(QDataStream::LittleEndian);
 
-        stream.writeRawData(MSC_GMAHEADER_ID1, sizeof(MSC_GMAHEADER_ID1));
-        stream.writeRawData(MSC_GMAHEADER_ID2, sizeof(MSC_GMAHEADER_ID2));
+        stream.writeRawData(MSC_GMAHEADER_ID1, 4);
+        stream.writeRawData(MSC_GMAHEADER_ID2, 4);
         stream << static_cast<qint32>(array.size() + MSC_GMA_HEADER_LENGTH);
 
         array.insert(0, header);
