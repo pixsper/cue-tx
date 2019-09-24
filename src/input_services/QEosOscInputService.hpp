@@ -21,6 +21,7 @@
 #include <QNetworkDatagram>
 #include <QDataStream>
 #include <QRegularExpression>
+#include "../QOscTcpDecoder.hpp"
 #include "oscpp/server.hpp"
 
 class QEosOscInputService : public QCueTxInputService
@@ -36,23 +37,28 @@ public:
 private:
     Q_OBJECT
 
-    static const quint16 TCP_PORT = 3032;
+    static const quint16 EOS_TCP_PORT = 3032;
 
     QTcpSocket* _tcpSocket;
     QUdpSocket* _udpSocket;
 
+    QOscTcpDecoder* _tcpDecoder;
+
     ReceiveMode _mode;
-    quint16 _udpPort;
+    QHostAddress _hostIp;
+    quint16 _hostPort;
 
     QRegularExpression _addressRegex;
 
 public:
     static const QString SETTINGS_MODE_KEY;
     static const ReceiveMode SETTINGS_MODE_DEFAULT = ReceiveMode::TcpPacketLengthHeaders;
-    static const QString SETTINGS_HOSTUDPPORT_KEY;
-    static const quint16 SETTINGS_HOSTUDPPORT_MIN = 1;
-    static const quint16 SETTINGS_HOSTUDPPORT_MAX = 65535;
-    static const quint16 SETTINGS_HOSTUDPPORT_DEFAULT = 8001;
+    static const QString SETTINGS_HOSTIP_KEY;
+    static const QString SETTINGS_HOSTIP_DEFAULT;
+    static const QString SETTINGS_HOSTPORT_KEY;
+    static const quint16 SETTINGS_HOSTPORT_MIN = 1;
+    static const quint16 SETTINGS_HOSTPORT_MAX = 65535;
+    static const quint16 SETTINGS_HOSTPORT_DEFAULT = 8001;
 
 
     static QVariantMap staticDefaultSettings();
@@ -71,10 +77,9 @@ private:
 
     void processDatagram(const QNetworkDatagram& datagram);
 
+private slots:
     void processPacket(const OSCPP::Server::Packet& packet);
 
-
-private slots:
-    void readPendingDatagrams();
+    void readNetworkData();
 
 };

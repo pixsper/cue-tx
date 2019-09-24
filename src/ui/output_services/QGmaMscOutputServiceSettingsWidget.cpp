@@ -28,9 +28,6 @@ QGmaMscOutputServiceSettingsWidget::QGmaMscOutputServiceSettingsWidget(QWidget *
 
     connect(ui->spinBoxOutputUdpPort, qOverload<int>(&QSpinBox::valueChanged),
             [&](int) { settingsChanged(getSettings()); });
-
-    connect(ui->checkBoxAddZeroPadding, &QCheckBox::stateChanged,
-            [&](int) { settingsChanged(getSettings()); });
 }
 
 QGmaMscOutputServiceSettingsWidget::~QGmaMscOutputServiceSettingsWidget()
@@ -45,25 +42,17 @@ void QGmaMscOutputServiceSettingsWidget::setSettings(const QVariantMap& settings
         if (it != settings.end())
             ui->spinBoxOutputUdpPort->setValue(it.value().toInt());
     }
-
-    {
-        const auto it = settings.find(QGmaMscOutputService::SETTINGS_ADDZEROPADDING_KEY);
-        if (it != settings.end())
-            ui->checkBoxAddZeroPadding->setChecked(it.value().toBool());
-    }
 }
 
 QVariantMap QGmaMscOutputServiceSettingsWidget::getSettings()
 {
     return QVariantMap
     {
-        { QGmaMscOutputService::SETTINGS_HOSTPORT_KEY, ui->spinBoxOutputUdpPort->value() },
-        { QGmaMscOutputService::SETTINGS_ADDZEROPADDING_KEY, ui->checkBoxAddZeroPadding->isChecked() }
+        { QGmaMscOutputService::SETTINGS_HOSTPORT_KEY, ui->spinBoxOutputUdpPort->value() }
     };
 }
 
 void QGmaMscOutputServiceSettingsWidget::setDefaultSettings()
 {
     ui->spinBoxOutputUdpPort->setValue(QGmaMscOutputService::SETTINGS_HOSTPORT_DEFAULT);
-    ui->checkBoxAddZeroPadding->setChecked(QGmaMscOutputService::SETTINGS_ADDZEROPADDING_DEFAULT);
 }

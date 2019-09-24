@@ -21,6 +21,7 @@ SOURCES += \
         src/MscTimecode.cpp \
         src/QCueLogger.cpp \
         src/QCueRouter.cpp \
+        src/QOscTcpDecoder.cpp \
         src/QSettingsManager.cpp \
         src/ServiceFactory.cpp \
         src/input_services/QEosOscInputService.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
         src/qrtmidi/QRtMidiIn.cpp \
         src/qrtmidi/QRtMidiOut.cpp \
         src/main.cpp \
+        src/ui/QAboutDialog.cpp \
         src/ui/QPreferencesWindow.cpp \
         src/ui/SettingsWidgetFactory.cpp \
         src/ui/input_services/QGmaMscInputServiceSettingsWidget.cpp \
@@ -49,6 +51,7 @@ HEADERS += \
         src/MscTimecode.hpp \
         src/QCueLogger.hpp \
         src/QCueRouter.hpp \
+        src/QOscTcpDecoder.hpp \
         src/QSettingsManager.hpp \
         src/ServiceFactory.hpp \
         src/ServiceTypes.hpp \
@@ -63,6 +66,7 @@ HEADERS += \
         src/output_services/QQLabOscOutputService.hpp \
         src/qrtmidi/QRtMidiIn.hpp \
         src/qrtmidi/QRtMidiOut.hpp \
+        src/ui/QAboutDialog.hpp \
         src/ui/QPreferencesWindow.hpp \
         src/ui/QSettingsWidget.hpp \
         src/ui/SettingsWidgetFactory.hpp \
@@ -75,6 +79,7 @@ HEADERS += \
         src/ui/output_services/QQLabOscOutputServiceSettingsWidget.hpp
 
 FORMS += \
+    src/ui/QAboutDialog.ui \
     src/ui/QPreferencesWindow.ui \
     src/ui/input_services/QGmaMscInputServiceSettingsWidget.ui \
     src/ui/input_services/QEosOscInputServiceSettingsWidget.ui \

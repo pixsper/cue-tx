@@ -17,10 +17,14 @@
 
 const QString QEosOscInputService::SETTINGS_MODE_KEY = "in_eos_mode";
 const QEosOscInputService::ReceiveMode QEosOscInputService::SETTINGS_MODE_DEFAULT;
-const QString QEosOscInputService::SETTINGS_HOSTUDPPORT_KEY = "in_eos_host_udp_port";
-const quint16 QEosOscInputService::SETTINGS_HOSTUDPPORT_MIN;
-const quint16 QEosOscInputService::SETTINGS_HOSTUDPPORT_MAX;
-const quint16 QEosOscInputService::SETTINGS_HOSTUDPPORT_DEFAULT;
+
+const QString QEosOscInputService::SETTINGS_HOSTIP_KEY = "in_eos_host_port";
+const QString QEosOscInputService::SETTINGS_HOSTIP_DEFAULT = "127.0.0.1";
+
+const QString QEosOscInputService::SETTINGS_HOSTPORT_KEY = "in_eos_host_ip";
+const quint16 QEosOscInputService::SETTINGS_HOSTPORT_MIN;
+const quint16 QEosOscInputService::SETTINGS_HOSTPORT_MAX;
+const quint16 QEosOscInputService::SETTINGS_HOSTPORT_DEFAULT;
 
 
 QVariantMap QEosOscInputService::staticDefaultSettings()
@@ -28,7 +32,8 @@ QVariantMap QEosOscInputService::staticDefaultSettings()
     return QVariantMap
     {
         { SETTINGS_MODE_KEY, static_cast<int>(SETTINGS_MODE_DEFAULT) },
-        { SETTINGS_HOSTUDPPORT_KEY, SETTINGS_HOSTUDPPORT_DEFAULT }
+        { SETTINGS_HOSTIP_KEY, SETTINGS_HOSTIP_DEFAULT },
+        { SETTINGS_HOSTPORT_KEY, SETTINGS_HOSTPORT_DEFAULT }
     };
 }
 
@@ -43,26 +48,65 @@ QEosOscInputService::QEosOscInputService(QObject* parent)
 
 bool QEosOscInputService::start(const QVariantMap& settings)
 {
-    quint16 port = SETTINGS_HOSTUDPPORT_DEFAULT;
+    _mode = SETTINGS_MODE_DEFAULT;
 
-    const auto it = settings.find(SETTINGS_HOSTUDPPORT_KEY);
+    {
+        const auto it = settings.find(SETTINGS_MODE_KEY);
+        if (it != settings.end())
+            _mode = (ReceiveMode)it.value().toInt();
+    }
 
-    if (it != settings.end())
-        port = static_cast<quint16>(it.value().toInt());
+    _hostIp.setAddress(SETTINGS_HOSTIP_DEFAULT);
+
+    {
+        const auto it = settings.find(SETTINGS_HOSTIP_KEY);
+        if (it != settings.end())
+        {
+            if (!_hostIp.setAddress(it.value().toString()))
+                _hostIp.setAddress(SETTINGS_HOSTIP_DEFAULT);
+        }
+    }
+
+
+    _hostPort = SETTINGS_HOSTPORT_DEFAULT;
+
+    {
+        const auto it = settings.find(SETTINGS_HOSTPORT_KEY);
+        if (it != settings.end())
+            _hostPort = static_cast<quint16>(it.value().toInt());
+    }
+
+
 
     switch(_mode)
     {
         case ReceiveMode::TcpPacketLengthHeaders:
+
+            _tcpDecoder = new QOscTcpDecoder(false, this);
+            connect(_tcpDecoder, &QOscTcpDecoder::packetRead, this, &QEosOscInputService::processPacket);
+
+            connect(_tcpSocket, &QIODevice::readyRead, this, &QEosOscInputService::readNetworkData);
+            connect(_tcpSocket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &QEosOscInputService::handleTcpError);
+
+            _tcpSocket->connectToHost(_hostIp, EOS_TCP_PORT);
+
+            return true;
+
         case ReceiveMode::TcpSlip:
 
-            connect(_tcpSocket, &QIODevice::readyRead, this, &QEosOscInputService::readPendingDatagrams);
+             _tcpDecoder = new QOscTcpDecoder(true, this);
+             connect(_tcpDecoder, &QOscTcpDecoder::packetRead, this, &QEosOscInputService::processPacket);
+
+            connect(_tcpSocket, &QIODevice::readyRead, this, &QEosOscInputService::readNetworkData);
             connect(_tcpSocket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &QEosOscInputService::handleTcpError);
-            return _tcpSocket->bind(port, QUdpSocket::ShareAddress);
+
+            _tcpSocket->connectToHost(_hostIp, EOS_TCP_PORT);
+            return true;
 
         case ReceiveMode::Udp:
 
-            connect(_udpSocket, &QIODevice::readyRead, this, &QEosOscInputService::readPendingDatagrams);
-            return _udpSocket->bind(port, QUdpSocket::ShareAddress);
+            connect(_udpSocket, &QIODevice::readyRead, this, &QEosOscInputService::readNetworkData);
+            return _udpSocket->bind(_hostPort, QUdpSocket::ShareAddress);
 
         default:
             Q_ASSERT(0); // Unknown receive mode
@@ -72,8 +116,24 @@ bool QEosOscInputService::start(const QVariantMap& settings)
 
 void QEosOscInputService::stop()
 {
-    _udpSocket->disconnectFromHost();
-    disconnect(_udpSocket, &QUdpSocket::readyRead, this, &QEosOscInputService::readPendingDatagrams);
+    switch(_mode)
+    {
+        case ReceiveMode::TcpPacketLengthHeaders:
+        case ReceiveMode::TcpSlip:
+
+            _tcpSocket->disconnectFromHost();
+            disconnect(_tcpSocket, &QIODevice::readyRead, this, &QEosOscInputService::readNetworkData);
+            disconnect(_tcpSocket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &QEosOscInputService::handleTcpError);
+
+            break;
+
+        case ReceiveMode::Udp:
+
+            _udpSocket->disconnectFromHost();
+            disconnect(_udpSocket, &QUdpSocket::readyRead, this, &QEosOscInputService::readNetworkData);
+
+            break;
+    }
 }
 
 void QEosOscInputService::handleTcpError(QAbstractSocket::SocketError socketError)
@@ -81,15 +141,11 @@ void QEosOscInputService::handleTcpError(QAbstractSocket::SocketError socketErro
     switch (socketError)
     {
         case QAbstractSocket::RemoteHostClosedError:
-            break;
         case QAbstractSocket::HostNotFoundError:
-            //QMessageBox::information(this, tr("Fortune Client"), tr("The host was not found. Please check the host name and port settings."));
-            break;
         case QAbstractSocket::ConnectionRefusedError:
-            //QMessageBox::information(this, tr("Fortune Client"), tr("The connection was refused by the peer. Make sure the fortune server is running, and check that the host name and port settings are correct."));
+            _tcpSocket->connectToHost(_hostIp, EOS_TCP_PORT);
             break;
         default:
-           // QMessageBox::information(this, tr("Fortune Client"), tr("The following error occurred: %1.").arg(tcpSocket->errorString()));
             break;
     }
 }
@@ -131,13 +187,22 @@ void QEosOscInputService::processDatagram(const QNetworkDatagram& datagram)
     }
 }
 
-
-
-void QEosOscInputService::readPendingDatagrams()
+void QEosOscInputService::readNetworkData()
 {
-    while (_udpSocket->hasPendingDatagrams())
+    switch(_mode)
     {
-        QNetworkDatagram datagram = _udpSocket->receiveDatagram();
-        processDatagram(datagram);
+        case QEosOscInputService::ReceiveMode::TcpPacketLengthHeaders:
+        case QEosOscInputService::ReceiveMode::TcpSlip:
+
+            _tcpDecoder->addData(_tcpSocket->readAll());
+
+            break;
+
+        case QEosOscInputService::ReceiveMode::Udp:
+
+            while (_udpSocket->hasPendingDatagrams())
+                processDatagram(_udpSocket->receiveDatagram());
+
+            break;
     }
 }

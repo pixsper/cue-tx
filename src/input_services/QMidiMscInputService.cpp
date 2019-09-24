@@ -16,6 +16,7 @@
 #include "QMidiMscInputService.hpp"
 
 const QString QMidiMscInputService::VIRTUAL_MIDI_PORT_NAME = "to CueTX";
+
 const QString QMidiMscInputService::SETTINGS_PORTNAME_KEY = "in_midi_port";
 const QString QMidiMscInputService::SETTINGS_PORTNAME_DEFAULT = "";
 const QString QMidiMscInputService::SETTINGS_ISVIRTUAL_KEY = "in_midi_is_virtual";

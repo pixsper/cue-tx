@@ -18,24 +18,18 @@
 const QString QGmaMscOutputService::SETTINGS_HOSTPORT_KEY = "out_gma_host_port";
 const quint16 QGmaMscOutputService::SETTINGS_HOSTPORT_DEFAULT;
 
-
-const QString QGmaMscOutputService::SETTINGS_ADDZEROPADDING_KEY = "out_gma_add_zero_padding";
-const bool QGmaMscOutputService::SETTINGS_ADDZEROPADDING_DEFAULT;
-
 QVariantMap QGmaMscOutputService::staticDefaultSettings()
 {
     return QVariantMap
     {
-        { SETTINGS_HOSTPORT_KEY, SETTINGS_HOSTPORT_DEFAULT },
-        { SETTINGS_ADDZEROPADDING_KEY, SETTINGS_ADDZEROPADDING_DEFAULT }
+        { SETTINGS_HOSTPORT_KEY, SETTINGS_HOSTPORT_DEFAULT }
     };
 }
 
 QGmaMscOutputService::QGmaMscOutputService(QObject* parent)
     : QCueTxOutputService(parent),
       _udpSocket(new QUdpSocket(this)),
-      _udpPort(SETTINGS_HOSTPORT_DEFAULT),
-      _isAddZeroPadding(SETTINGS_ADDZEROPADDING_DEFAULT)
+      _udpPort(SETTINGS_HOSTPORT_DEFAULT)
 {
 }
 

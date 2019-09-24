@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>QGmaMscOutputServiceSettingsWidget</class>
  <widget class="QWidget" name="QGmaMscOutputServiceSettingsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>249</width>
+    <height>45</height>
+   </rect>
+  </property>
   <layout class="QFormLayout" name="formLayout">
    <property name="fieldGrowthPolicy">
     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
@@ -20,13 +28,6 @@
     <widget class="QSpinBox" name="spinBoxOutputUdpPort">
      <property name="buttonSymbols">
       <enum>QAbstractSpinBox::UpDownArrows</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="QCheckBox" name="checkBoxAddZeroPadding">
-     <property name="text">
-      <string>Add Zero Padding to Cue Numbers</string>
      </property>
     </widget>
    </item>
