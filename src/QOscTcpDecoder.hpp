@@ -36,7 +36,7 @@ public:
         if (_buffer.size() < length + 4)
             return;
 
-        OSCPP::Server::Packet packet(_buffer.data() + 4, length);
+        OSCPP::Server::Packet packet(_buffer.data() + 4, static_cast<size_t>(length));
         emit packetRead(packet);
 
         _buffer.remove(0, length + 4);

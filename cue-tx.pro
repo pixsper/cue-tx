@@ -1,7 +1,6 @@
 QT       += core gui \
-        network
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+        network \
+        widgets
 
 TARGET = cue-tx
 TEMPLATE = app
@@ -46,11 +45,13 @@ SOURCES += \
         src/ui/output_services/QQLabOscOutputServiceSettingsWidget.cpp
 
 HEADERS += \
+        src/DmxPacket.hpp \
         src/MscCueId.hpp \
         src/MscMessage.hpp \
         src/MscTimecode.hpp \
         src/QCueLogger.hpp \
         src/QCueRouter.hpp \
+        src/QDmxSender.hpp \
         src/QOscTcpDecoder.hpp \
         src/QSettingsManager.hpp \
         src/ServiceFactory.hpp \

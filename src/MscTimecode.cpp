@@ -28,6 +28,10 @@ int getFrameCount(MidiTimecodeFramerate framerate)
 	case MidiTimecodeFramerate::F30Df:
 	case MidiTimecodeFramerate::F30Nd:
 		return 30;
+
+    default:
+        assert(false);
+        return 30;
 	}
 }
 
